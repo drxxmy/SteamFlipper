@@ -65,6 +65,41 @@ class FlipOpportunity:
 
         return RiskLevel.LOW
 
+    def format_log(self, profitable: bool) -> tuple[str, tuple]:
+        """
+        Return a logging format string and arguments.
+        """
+        icon = "💰" if profitable else "✅"
+        net_fmt = "+%.2f" if profitable else "%7.2f"
+
+        return (
+            f"{icon} %-30s | buy=%7.2f sell=%7.2f net={net_fmt} "
+            f"profit=%6.2f%% vol=%6d risk=%s",
+            (
+                self.name,
+                self.buy_price,
+                self.sell_price,
+                self.net_profit,
+                self.profit_pct,
+                self.volume,
+                self.risk_level.value,
+            ),
+        )
+
+    def format_telegram(self) -> str:
+        """
+        Format Telegram notification message.
+        """
+        return (
+            f"<b>{self.name}</b>\n"
+            f"⚠️ Risk: <b>{self.risk_level.value}</b>\n"
+            f"💳 Buy: {self.buy_price:.2f} ₽\n"
+            f"💸 Sell: {self.sell_price:.2f} ₽\n"
+            f"🤑 <b>Profit: +{self.net_profit:.2f} ₽ "
+            f"({self.profit_pct:.2f}%)</b>\n"
+            f"📦 Volume: {self.volume}"
+        )
+
 
 @dataclass
 class WatchItem:

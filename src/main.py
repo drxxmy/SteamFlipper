@@ -30,44 +30,19 @@ async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:
         if not opp:
             continue
 
-        # Log opportunity
-        log.info(
-            "✅ %-30s | buy=%7.2f sell=%7.2f net=%7.2f vol=%6d spread=%6.2f%% risk=%s",
-            opp.name,
-            opp.buy_price,
-            opp.sell_price,
-            opp.net_profit,
-            opp.volume,
-            opp.spread_pct * 100,
-            opp.risk_level.value,
-        )
-
         # Check if opportunity is profitable
-        if is_profitable(opp):
-            # Send a telegram notification
-            if notifier:
-                try:
-                    await notifier.send(
-                        f"<b>{opp.name}</b>\n"
-                        f"  Risk: {opp.risk_level.value}\n"
-                        f"💳 Buy: {opp.buy_price:.2f} ₽\n"
-                        f"💸 Sell: {opp.sell_price:.2f} ₽\n"
-                        f"🤑 <b>Profit: +{opp.net_profit:.2f} ₽ ({(opp.spread_pct * 100):.2f}%)</b>\n"
-                    )
-                except Exception:
-                    log.exception("❌ Telegram send failed...")
+        profitable = is_profitable(opp)
 
-            # Log into the terminal
-            log.info(
-                "💰 %-30s | buy=%7.2f sell=%7.2f net=+%.2f vol=%6d spread=%6.2f%% risk=%s",
-                opp.name,
-                opp.buy_price,
-                opp.sell_price,
-                opp.net_profit,
-                opp.volume,
-                opp.spread_pct * 100,
-                opp.risk_level.value,
-            )
+        # Log opportunity
+        fmt, args = opp.format_log(profitable)
+        log.info(fmt, *args)
+
+        # Send Telegram message
+        if profitable and notifier:
+            try:
+                await notifier.send(opp.format_telegram())
+            except Exception:
+                log.exception("❌ Telegram send failed...")
 
 
 async def run() -> None:
