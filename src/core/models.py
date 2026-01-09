@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from .risks import RiskLevel
 
@@ -121,5 +122,5 @@ class FlipOpportunity:
 @dataclass
 class WatchItem:
     name: str
-    min_volume: int = 0
-    min_profit: float = 0.0
+    min_volume: Optional[int] = None
+    min_profit: Optional[float] = None
