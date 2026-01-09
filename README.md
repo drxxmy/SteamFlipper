@@ -1,0 +1,19 @@
+# Steam Auto Market (SAM)
+
+A Python service that periodically checks Steam Market prices for a predefined
+list of liquid CS2 items, calculates net profit after Steam fees, and sends
+Telegram notifications when profitable flip opportunities appear.
+
+## Money loop
+
+### Manual
+
+- Bot scans Steam Market for profitable flips
+- Bot sends Telegram alert
+- User manually buys & sells
+
+### Automated
+
+- User enables auto-flip mode
+- Bot buys & lists items automatically
+- Bot notifies on each operation
