@@ -1,6 +1,15 @@
+# Direnv
 .direnv
+
+# Devenv
 .devenv
+
+# Production env
 .env
 
+# Pre-commit configuration
 .pre-commit-config.yaml
-**/__pycache__
+
+# Python cache
+__pycache__/
+*.pyc
