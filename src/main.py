@@ -28,12 +28,13 @@ async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:
 
         # Log opportunity
         log.info(
-            "✅ %-30s | buy=%7.2f sell=%7.2f net=%7.2f vol=%6d",
+            "✅ %-30s | buy=%7.2f sell=%7.2f net=%7.2f vol=%6d spread=%6.2f%%",
             opp.name,
             opp.buy_price,
             opp.sell_price,
             opp.net_profit,
             opp.volume,
+            opp.spread_pct * 100,
         )
 
         # Check if opportunity is profitable
@@ -52,12 +53,13 @@ async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:
 
             # Log into the terminal
             log.info(
-                "💰 %-30s | buy=%7.2f sell=%7.2f net=+%.2f vol=%6d",
+                "💰 %-30s | buy=%7.2f sell=%7.2f net=+%.2f vol=%6d spread=%6.2f%%",
                 opp.name,
                 opp.buy_price,
                 opp.sell_price,
                 opp.net_profit,
                 opp.volume,
+                opp.spread_pct * 100,
             )
 
 
