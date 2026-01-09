@@ -37,7 +37,7 @@ async def scan_once(client: SteamMarketClient) -> None:
 
         # Log opportunity
         log.info(
-            "✅ %-40s | buy=%7.2f sell=%7.2f net=%7.2f vol=%6d",
+            "✅ %-30s | buy=%7.2f sell=%7.2f net=%7.2f vol=%6d",
             opp.name,
             opp.buy_price,
             opp.sell_price,
@@ -61,11 +61,12 @@ async def scan_once(client: SteamMarketClient) -> None:
 
             # Log into the terminal
             log.info(
-                "💰 PROFIT %-30s | Buy=%.2f Sell=%.2f Net=+%.2f",
+                "💰 %-30s | buy=%7.2f sell=%7.2f net=+%.2f vol=%6d",
                 opp.name,
                 opp.buy_price,
                 opp.sell_price,
                 opp.net_profit,
+                opp.volume,
             )
 
 
