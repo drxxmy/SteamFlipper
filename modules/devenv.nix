@@ -28,6 +28,7 @@
 
           enterShell = ''
             echo "❄️ Started Steam Market devshell"
+            source .venv/bin/activate
             tmuxinator local
           '';
         };
