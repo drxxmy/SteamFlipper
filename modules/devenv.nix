@@ -23,7 +23,6 @@
               deadnix.enable = true;
               end-of-file-fixer.enable = true;
               flake-checker.enable = true;
-              isort.enable = true;
               black.enable = true;
             };
           };
