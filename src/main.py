@@ -1,8 +1,9 @@
 import asyncio
 import logging
 
-from config import CHECK_INTERVAL_SECONDS
+from config import CHECK_INTERVAL_SECONDS, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 from logs.logging import setup_logging
+from notifier.telegram import TelegramNotifier
 from rules.near_profit import is_nearly_profitable
 from rules.profit import is_profitable
 from scraper.steam_market import SteamMarketClient, build_opportunity
@@ -18,6 +19,13 @@ APPID_CS2 = 730
 setup_logging()
 log = logging.getLogger("automarket")
 
+notifier = None
+if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+    notifier = TelegramNotifier(
+        TELEGRAM_BOT_TOKEN,
+        TELEGRAM_CHAT_ID,
+    )
+
 
 async def scan_once(client: SteamMarketClient) -> None:
     for name in ITEMS:
@@ -30,7 +38,7 @@ async def scan_once(client: SteamMarketClient) -> None:
             continue
 
         log.info(
-            "✅ CHECK %-40s | buy=%7.2f sell=%7.2f net=%7.2f vol=%d",
+            "✅ %-40s | buy=%7.2f sell=%7.2f net=%7.2f vol=%d",
             opp.name,
             opp.buy_price,
             opp.sell_price,
@@ -39,8 +47,21 @@ async def scan_once(client: SteamMarketClient) -> None:
         )
 
         if is_profitable(opp):
+            if notifier:
+                try:
+                    await notifier.send(
+                        f"💰 <b>PROFIT</b>\n"
+                        f"{opp.name}\n"
+                        f"Buy: {opp.buy_price:.2f} ₽\n"
+                        f"Sell: {opp.sell_price:.2f} ₽\n"
+                        f"Net: <b>{opp.net_profit:.2f} ₽</b>\n"
+                        f"Volume: {opp.volume}"
+                    )
+                except Exception:
+                    log.exception("❌ Telegram send failed...")
+
             log.info(
-                "💰 PROFIT %-30s | buy=%.2f sell=%.2f net=+%.2f",
+                "💰 PROFIT %-30s | Buy=%.2f Sell=%.2f Net=+%.2f",
                 opp.name,
                 opp.buy_price,
                 opp.sell_price,
