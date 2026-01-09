@@ -98,7 +98,7 @@ class FlipOpportunity:
                 self.buy_price,
                 self.sell_price,
                 self.net_profit,
-                self.profit_pct,
+                self.profit_pct * 100,
                 self.volume,
                 self.risk_level.value,
             ),
@@ -114,7 +114,7 @@ class FlipOpportunity:
             f"💳 Buy: {self.buy_price:.2f} ₽\n"
             f"💸 Sell: {self.sell_price:.2f} ₽\n"
             f"🤑 <b>Profit: +{self.net_profit:.2f} ₽ "
-            f"({self.profit_pct:.2f}%)</b>\n"
+            f"({(self.profit_pct * 100):.2f}%)</b>\n"
             f"📦 Volume: {self.volume}"
         )
 
