@@ -1,15 +1,13 @@
 import asyncio
 import logging
 
-from config import CHECK_INTERVAL_SECONDS, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+from config import APP_ID, CHECK_INTERVAL_SECONDS, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 from core.watchlist import load_watchlist
 from logs.logging import setup_logging
 from notifier.telegram import TelegramNotifier
 from rules.near_profit import is_nearly_profitable
 from rules.profit import is_profitable
 from scraper.steam_market import SteamMarketClient, build_opportunity
-
-APPID_CS2 = 730
 
 setup_logging()
 log = logging.getLogger("automarket")
@@ -26,7 +24,7 @@ watchlist = load_watchlist()
 
 async def scan_once(client: SteamMarketClient) -> None:
     for item in watchlist:
-        data = await client.fetch(APPID_CS2, item.name)
+        data = await client.fetch(APP_ID, item.name)
         if not data:
             continue
 
