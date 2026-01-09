@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from .risks import RiskLevel
+
 
 @dataclass
 class FlipOpportunity:
@@ -29,6 +31,26 @@ class FlipOpportunity:
         stable, repeatable profit opportunities.
         """
         return (self.sell_price - self.buy_price) / self.buy_price
+
+    @property
+    def risk_level(self) -> RiskLevel:
+        """
+        Classify risk based on liquidity and price spread.
+        """
+
+        # Extremely wide spreads are almost always outliers
+        if self.spread_pct > 0.40:
+            return RiskLevel.HIGH
+
+        # Low volume = hard to exit position
+        if self.volume < 50:
+            return RiskLevel.HIGH
+
+        # Medium risk: still tradable, but watch closely
+        if self.spread_pct > 0.25 or self.volume < 150:
+            return RiskLevel.MEDIUM
+
+        return RiskLevel.LOW
 
 
 @dataclass

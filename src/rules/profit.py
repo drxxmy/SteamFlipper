@@ -1,4 +1,5 @@
 from core.models import FlipOpportunity
+from core.risks import RiskLevel
 
 
 def is_profitable(item: FlipOpportunity) -> bool:
@@ -10,8 +11,8 @@ def is_profitable(item: FlipOpportunity) -> bool:
     if item.volume < 100:
         return False
 
-    # Filter items with risky spreads (over 30%)
-    if item.spread_pct > 0.30:
+    # Filter high risk flips
+    if item.risk_level == RiskLevel.HIGH:
         return False
 
     return True
