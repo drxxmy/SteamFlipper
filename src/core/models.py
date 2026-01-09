@@ -2,6 +2,8 @@ from dataclasses import dataclass
 
 from .risks import RiskLevel
 
+MAX_NAME_LEN = 32
+
 
 @dataclass
 class FlipOpportunity:
@@ -65,18 +67,33 @@ class FlipOpportunity:
 
         return RiskLevel.LOW
 
+    @property
+    def short_name(self) -> str:
+        if len(self.name) <= MAX_NAME_LEN:
+            return self.name
+        return self.name[: MAX_NAME_LEN - 1] + "…"
+
     def format_log(self, profitable: bool) -> tuple[str, tuple]:
-        """
-        Return a logging format string and arguments.
-        """
-        icon = "💰" if profitable else "✅"
-        net_fmt = "+%.2f" if profitable else "%7.2f"
+        name_color = "green" if profitable else "red"
+        icon = "💰" if profitable else "❌"
+
+        risk_color = "green"
+        if self.risk_level == RiskLevel.MEDIUM:
+            risk_color = "yellow"
+        elif self.risk_level == RiskLevel.HIGH:
+            risk_color = "red"
 
         return (
-            f"{icon} %-30s | buy=%7.2f sell=%7.2f net={net_fmt} "
-            f"profit=%6.2f%% vol=%6d risk=%s",
             (
-                self.name,
+                f"[{name_color}]{icon} %-32s[/{name_color}] "
+                f"BUY %7.2f → SELL %7.2f  "
+                f"NET %+8.2f  "
+                f"ROI %6.2f%%  "
+                f"VOL %6d  "
+                f"RISK [{risk_color}]%-6s[/{risk_color}]"
+            ),
+            (
+                self.short_name,
                 self.buy_price,
                 self.sell_price,
                 self.net_profit,
