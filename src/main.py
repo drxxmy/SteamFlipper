@@ -1,12 +1,17 @@
 import asyncio
 import logging
 
-from config import APP_ID, CHECK_INTERVAL_SECONDS, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+from config.env import (
+    APP_ID,
+    CHECK_INTERVAL_SECONDS,
+    TELEGRAM_BOT_TOKEN,
+    TELEGRAM_CHAT_ID,
+)
 from core.watchlist import load_watchlist
 from logs.logging import setup_logging
 from notifier.telegram import TelegramNotifier
-from rules.profit import is_profitable
 from scraper.steam_market import SteamMarketClient, build_opportunity
+from strategy.profit import is_profitable
 
 setup_logging()
 log = logging.getLogger("automarket")

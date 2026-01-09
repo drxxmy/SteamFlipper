@@ -3,7 +3,7 @@ import yaml
 from core.models import WatchItem
 
 
-def load_watchlist(path="src/watchlist.yaml") -> list[WatchItem]:
+def load_watchlist(path="src/config/watchlist.yaml") -> list[WatchItem]:
     with open(path, "r") as f:
         data = yaml.safe_load(f)
 
