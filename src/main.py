@@ -12,17 +12,8 @@ from scraper.steam_market import SteamMarketClient, build_opportunity
 setup_logging()
 log = logging.getLogger("automarket")
 
-notifier = None
-if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
-    notifier = TelegramNotifier(
-        TELEGRAM_BOT_TOKEN,
-        TELEGRAM_CHAT_ID,
-    )
 
-watchlist = load_watchlist()
-
-
-async def scan_once(client: SteamMarketClient) -> None:
+async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:
     for item in watchlist:
         # Fetch data for a specific item
         data = await client.fetch(APP_ID, item.name)
@@ -72,11 +63,19 @@ async def scan_once(client: SteamMarketClient) -> None:
 
 async def run() -> None:
     client = SteamMarketClient(currency=5)
+    notifier = None
+    if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+        notifier = TelegramNotifier(
+            TELEGRAM_BOT_TOKEN,
+            TELEGRAM_CHAT_ID,
+        )
+
+    watchlist = load_watchlist()
 
     try:
         while True:
             log.info("🔄 Starting market scan")
-            await scan_once(client)
+            await scan_once(client, notifier, watchlist)
             log.info("😴 Sleeping for %d seconds", CHECK_INTERVAL_SECONDS)
             await asyncio.sleep(CHECK_INTERVAL_SECONDS)
 
