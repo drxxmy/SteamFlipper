@@ -17,3 +17,13 @@ Telegram notifications when profitable flip opportunities appear.
 - User enables auto-flip mode
 - Bot buys & lists items automatically
 - Bot notifies on each operation
+
+## MVP constraints
+
+| Area | Limit |
+| ------------- | -------------- |
+| Items tracked | 20-50 |
+| Steam endpoints | priceoverview only |
+| Storage | None |
+| Auto-buy | No |
+| UI | No |
