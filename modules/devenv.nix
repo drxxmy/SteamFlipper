@@ -10,6 +10,9 @@
           languages.python = {
             enable = true;
             directory = ./src;
+            uv = {
+              enable = true;
+            };
           };
           git-hooks = {
             package = pkgs.prek;
