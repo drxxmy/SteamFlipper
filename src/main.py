@@ -24,7 +24,10 @@ watchlist = load_watchlist()
 
 async def scan_once(client: SteamMarketClient) -> None:
     for item in watchlist:
+        # Fetch data for a specific item
         data = await client.fetch(APP_ID, item.name)
+
+        # Skip if data was not fetched
         if not data:
             continue
 
@@ -32,6 +35,7 @@ async def scan_once(client: SteamMarketClient) -> None:
         if not opp:
             continue
 
+        # Log opportunity
         log.info(
             "✅ %-40s | buy=%7.2f sell=%7.2f net=%7.2f vol=%6d",
             opp.name,
@@ -41,7 +45,9 @@ async def scan_once(client: SteamMarketClient) -> None:
             opp.volume,
         )
 
+        # Check if opportunity is profitable
         if is_profitable(opp):
+            # Send a telegram notification
             if notifier:
                 try:
                     await notifier.send(
@@ -55,6 +61,7 @@ async def scan_once(client: SteamMarketClient) -> None:
                 except Exception:
                     log.exception("❌ Telegram send failed...")
 
+            # Log into the terminal
             log.info(
                 "💰 PROFIT %-30s | Buy=%.2f Sell=%.2f Net=+%.2f",
                 opp.name,
