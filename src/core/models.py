@@ -86,7 +86,7 @@ class FlipOpportunity:
 
         return (
             (
-                f"[{name_color}]{icon} %-32s[/{name_color}] "
+                f"[{name_color}]{icon} %-{MAX_NAME_LEN}s[/{name_color}] "
                 f"BUY %7.2f → SELL %7.2f  "
                 f"NET %+8.2f  "
                 f"ROI %6.2f%%  "
