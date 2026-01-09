@@ -39,10 +39,7 @@ async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:
 
         # Send Telegram message
         if profitable and notifier:
-            try:
-                await notifier.send(opp.format_telegram())
-            except Exception:
-                log.exception("❌ Telegram send failed...")
+            notifier.notify_opportunity(opp)
 
 
 async def run() -> None:
