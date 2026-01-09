@@ -45,7 +45,7 @@ async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:
                         f"<b>{opp.name}</b>\n"
                         f"💳 Buy: {opp.buy_price:.2f} ₽\n"
                         f"💸 Sell: {opp.sell_price:.2f} ₽\n"
-                        f"🤑 <b>Net: +{opp.net_profit:.2f} ₽</b>\n"
+                        f"🤑 <b>Profit: +{opp.net_profit:.2f} ₽ ({(opp.spread_pct * 100):.2f}%)</b>\n"
                     )
                 except Exception:
                     log.exception("❌ Telegram send failed...")
