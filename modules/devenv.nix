@@ -9,10 +9,12 @@
           languages.nix.enable = true;
           languages.python = {
             enable = true;
-            directory = ./src;
+            directory = "./src";
             uv = {
               enable = true;
+              sync.enable = true;
             };
+            venv.enable = true;
           };
           git-hooks = {
             package = pkgs.prek;
@@ -28,7 +30,6 @@
 
           enterShell = ''
             echo "❄️ Started Steam Market devshell"
-            source .venv/bin/activate
             tmuxinator local
           '';
         };
