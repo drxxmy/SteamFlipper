@@ -27,3 +27,17 @@ Telegram notifications when profitable flip opportunities appear.
 | Storage | None |
 | Auto-buy | No |
 | UI | No |
+
+## How to Run?
+
+Sync dependencies using `uv` package manager:
+
+```bash
+uv sync
+```
+
+Run script:
+
+```bash
+python main.py
+```
