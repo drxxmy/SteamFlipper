@@ -14,7 +14,7 @@ from scraper.steam_market import SteamMarketClient, build_opportunity
 from strategy.profit import is_profitable
 
 setup_logging()
-log = logging.getLogger("automarket")
+log = logging.getLogger("automarket.market")
 
 
 async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:

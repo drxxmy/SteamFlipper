@@ -22,7 +22,7 @@ HEADERS = {
 # Global semaphore to protect yourself
 _SEMAPHORE = asyncio.Semaphore(3)
 
-log = logging.getLogger("automarket")
+log = logging.getLogger("automarket.scraper")
 
 
 class SteamMarketClient:

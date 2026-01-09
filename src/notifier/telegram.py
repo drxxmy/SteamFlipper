@@ -5,7 +5,7 @@ from telegram.constants import ParseMode
 
 from core.models import FlipOpportunity
 
-log = logging.getLogger("automarket")
+log = logging.getLogger("automarket.telegram")
 
 
 class TelegramNotifier:
