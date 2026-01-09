@@ -6,11 +6,11 @@ from rich.logging import RichHandler
 def setup_logging() -> None:
     logging.basicConfig(
         level=logging.INFO,
-        format="%(message)s",
-        datefmt="[%X]",
+        format="[%(name)s] %(message)s",
         handlers=[
             RichHandler(
-                rich_tracebacks=True,
+                show_time=True,
+                show_level=True,
                 show_path=False,
                 markup=True,
             )
