@@ -2,17 +2,12 @@ import asyncio
 import logging
 
 from config import CHECK_INTERVAL_SECONDS, TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+from core.watchlist import load_watchlist
 from logs.logging import setup_logging
 from notifier.telegram import TelegramNotifier
 from rules.near_profit import is_nearly_profitable
 from rules.profit import is_profitable
 from scraper.steam_market import SteamMarketClient, build_opportunity
-
-ITEMS = [
-    # CS2 examples (market_hash_name must be exact)
-    "AK-47 | Redline (Field-Tested)",
-    "Fracture Case",
-]
 
 APPID_CS2 = 730
 
@@ -26,14 +21,16 @@ if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
         TELEGRAM_CHAT_ID,
     )
 
+watchlist = load_watchlist()
+
 
 async def scan_once(client: SteamMarketClient) -> None:
-    for name in ITEMS:
-        data = await client.fetch_priceoverview(APPID_CS2, name)
+    for item in watchlist:
+        data = await client.fetch(APPID_CS2, item.name)
         if not data:
             continue
 
-        opp = build_opportunity(name, data)
+        opp = build_opportunity(item.name, data)
         if not opp:
             continue
 
