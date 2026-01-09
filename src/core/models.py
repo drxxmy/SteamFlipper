@@ -3,7 +3,7 @@ from typing import Optional
 
 from .risks import RiskLevel
 
-MAX_NAME_LEN = 32
+MAX_NAME_LEN = 28
 
 
 @dataclass
