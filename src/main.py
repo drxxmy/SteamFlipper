@@ -1,5 +1,6 @@
 import asyncio
 
+from rules.near_profit import is_nearly_profitable
 from rules.profit import is_profitable
 from scraper.steam_market import SteamMarketClient, build_opportunity
 
@@ -25,6 +26,9 @@ async def main():
             opp = build_opportunity(name, data)
             if not opp:
                 continue
+
+            if is_nearly_profitable(opp):
+                print(f"[NEAR] {opp.name} {opp.net_profit:.2f} RUB")
 
             if is_profitable(opp):
                 print(
