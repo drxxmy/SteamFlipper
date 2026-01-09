@@ -1,0 +1,7 @@
+items:
+  - name: "Fracture Case"
+    min_volume: 10000
+    min_profit: 2.0
+  - name: "AK-47 | Redline (Field-Tested)"
+    min_volume: 50
+    min_profit: 50.0
