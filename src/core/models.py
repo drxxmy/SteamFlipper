@@ -22,6 +22,19 @@ class FlipOpportunity:
         return self.sell_price * 0.85 - self.buy_price
 
     @property
+    def profit_pct(self) -> float:
+        """
+        Return on investment (ROI) after Steam fees.
+
+        Represents how much the invested capital grows (or shrinks)
+        relative to the buy price.
+        """
+        if self.buy_price <= 0:
+            return 0.0
+
+        return self.net_profit / self.buy_price
+
+    @property
     def spread_pct(self) -> float:
         """
         Relative price spread between buy and sell prices.
