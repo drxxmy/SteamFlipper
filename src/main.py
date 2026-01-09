@@ -5,7 +5,6 @@ from config import APP_ID, CHECK_INTERVAL_SECONDS, TELEGRAM_BOT_TOKEN, TELEGRAM_
 from core.watchlist import load_watchlist
 from logs.logging import setup_logging
 from notifier.telegram import TelegramNotifier
-from rules.near_profit import is_nearly_profitable
 from rules.profit import is_profitable
 from scraper.steam_market import SteamMarketClient, build_opportunity
 
