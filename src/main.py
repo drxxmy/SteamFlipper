@@ -1,18 +1,11 @@
 import asyncio
 import logging
-import os
 
-from dotenv import load_dotenv
-
+from config import CHECK_INTERVAL_SECONDS
 from logs.logging import setup_logging
 from rules.near_profit import is_nearly_profitable
 from rules.profit import is_profitable
 from scraper.steam_market import SteamMarketClient, build_opportunity
-
-# Load variables from .env file
-load_dotenv()
-
-CHECK_INTERVAL_SECONDS = int(os.getenv("CHECK_INTERVAL_SECONDS"))
 
 ITEMS = [
     # CS2 examples (market_hash_name must be exact)
