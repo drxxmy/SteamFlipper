@@ -33,9 +33,7 @@ class SteamMarketClient:
             timeout=httpx.Timeout(10.0),
         )
 
-    async def fetch_priceoverview(
-        self, appid: int, market_hash_name: str
-    ) -> Optional[dict]:
+    async def fetch(self, appid: int, market_hash_name: str) -> Optional[dict]:
         """
         Returns raw Steam priceoverview JSON or None.
         Never raises.
