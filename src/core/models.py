@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import NotRequired, TypedDict
 
 from .risks import RiskLevel
 
@@ -74,7 +74,7 @@ class FlipOpportunity:
             return self.name
         return self.name[: MAX_NAME_LEN - 1] + "…"
 
-    def format_log(self, profitable: bool) -> tuple[str, tuple]:
+    def format_log(self, profitable: bool) -> tuple[str, tuple[object, ...]]:
         name_color = "green" if profitable else "red"
         icon = "💰" if profitable else "❌"
 
@@ -122,5 +122,13 @@ class FlipOpportunity:
 @dataclass
 class WatchItem:
     name: str
-    min_volume: Optional[int] = None
-    min_profit: Optional[float] = None
+    min_volume: int | None
+    min_profit: float | None
+
+
+@dataclass
+class SteamPriceOverview(TypedDict):
+    success: bool
+    lowest_price: NotRequired[str]
+    median_price: NotRequired[str]
+    volume: NotRequired[str]

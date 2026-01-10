@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Load variables from .env file
-APP_ID = int(os.getenv("APP_ID"))
+APP_ID = int(os.getenv("APP_ID", "730"))
 CHECK_INTERVAL_SECONDS = int(os.getenv("CHECK_INTERVAL_SECONDS", "300"))
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")

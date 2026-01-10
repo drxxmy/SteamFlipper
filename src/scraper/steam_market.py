@@ -1,10 +1,11 @@
-import asyncio
 import logging
-from typing import Optional
+from asyncio import Semaphore, sleep
+from json import JSONDecodeError
+from typing import cast
 
-import httpx
+from httpx import AsyncClient, RequestError, Response, Timeout
 
-from core.models import FlipOpportunity
+from core.models import FlipOpportunity, SteamPriceOverview
 from core.utils import parse_price
 
 STEAM_PRICEOVERVIEW_URL = "https://steamcommunity.com/market/priceoverview/"
@@ -20,24 +21,26 @@ HEADERS = {
 }
 
 # Global semaphore to protect yourself
-_SEMAPHORE = asyncio.Semaphore(3)
+_SEMAPHORE = Semaphore(3)
 
 log = logging.getLogger("automarket.scraper")
 
 
 class SteamMarketClient:
-    def __init__(self, currency: int = 5):
+    def __init__(self, currency: int = 5) -> None:
         """
         currency=5 → RUB
         """
-        self.currency = currency
-        self.failures = 0
-        self._client = httpx.AsyncClient(
+        self.currency: int = currency
+        self.failures: int = 0
+        self._client: AsyncClient = AsyncClient(
             headers=HEADERS,
-            timeout=httpx.Timeout(10.0),
+            timeout=Timeout(10.0),
         )
 
-    async def fetch(self, appid: int, market_hash_name: str) -> Optional[dict]:
+    async def fetch(
+        self, appid: int, market_hash_name: str
+    ) -> SteamPriceOverview | None:
         """
         Returns raw Steam priceoverview JSON or None.
         Never raises.
@@ -48,14 +51,16 @@ class SteamMarketClient:
             "market_hash_name": market_hash_name,
         }
 
-        delay = min(5.0, 1.2 + self.failures * 0.8)
+        delay: float = min(5.0, 1.2 + self.failures * 0.8)
 
         async with _SEMAPHORE:
             # Mandatory delay (Steam is sensitive)
-            await asyncio.sleep(delay)
+            await sleep(delay)
 
             try:
-                resp = await self._client.get(STEAM_PRICEOVERVIEW_URL, params=params)
+                resp: Response = await self._client.get(
+                    STEAM_PRICEOVERVIEW_URL, params=params
+                )
 
                 if resp.status_code != 200:
                     self.failures += 1
@@ -66,17 +71,11 @@ class SteamMarketClient:
                     )
                     return None
 
-                data = resp.json()
-
-                # Steam sometimes returns {"success": false}
-                if not data:
-                    log.warning("❗ %s Empty response", market_hash_name)
-                elif not data.get("success"):
-                    log.warning("❗ %s Steam rate-limited", market_hash_name)
-
-                if not data:
+                try:
+                    data: SteamPriceOverview = cast(SteamPriceOverview, resp.json())
+                except JSONDecodeError:
                     self.failures += 1
-                    log.warning("❗ %s Empty response", market_hash_name)
+                    log.warning("❗ %s Invalid JSON", market_hash_name)
                     return None
 
                 if not data.get("success"):
@@ -88,7 +87,7 @@ class SteamMarketClient:
                 self.failures = 0
                 return data
 
-            except httpx.RequestError as e:
+            except RequestError as e:
                 self.failures += 1
                 log.warning(
                     "❗ %s Network error %s %s: %r",
@@ -99,20 +98,21 @@ class SteamMarketClient:
                 )
                 return None
 
-            except ValueError:
-                self.failures += 1
-                log.warning("❗ %s Invalid JSON", market_hash_name)
-                return None
-
     async def close(self) -> None:
         await self._client.aclose()
 
 
-def build_opportunity(name: str, data: dict) -> Optional[FlipOpportunity]:
+def build_opportunity(name: str, data: SteamPriceOverview) -> FlipOpportunity | None:
     try:
-        buy_price = parse_price(data.get("lowest_price"))
-        sell_price = parse_price(data.get("median_price"))
-        volume = int(data.get("volume", "0").replace(",", ""))
+        lowest: str | None = data.get("lowest_price")
+        median: str | None = data.get("median_price")
+
+        if not lowest or not median:
+            return None
+
+        buy_price: float = parse_price(lowest)
+        sell_price: float = parse_price(median)
+        volume: int = int(data.get("volume", "0").replace(",", ""))
 
         if buy_price <= 0 or sell_price <= 0:
             return None
