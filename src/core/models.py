@@ -1,11 +1,26 @@
 from dataclasses import dataclass
+from enum import Enum
 from typing import NotRequired, TypedDict
 
 from config.env import MIN_PROFIT, MIN_ROI, MIN_VOLUME, STEAM_FEE
 
-from .risks import RiskLevel
 
 MAX_NAME_LEN = 28
+
+
+class RiskLevel(str, Enum):
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+
+    def badge(self) -> str:
+        match self:
+            case self.LOW:
+                return "🟢"
+            case self.MEDIUM:
+                return "🟡"
+            case self.HIGH:
+                return "🔴"
 
 
 @dataclass
