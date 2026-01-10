@@ -8,6 +8,21 @@ from config.env import MIN_PROFIT, MIN_ROI, MIN_VOLUME, STEAM_FEE
 MAX_NAME_LEN = 28
 
 
+@dataclass
+class WatchItem:
+    name: str
+    min_volume: int | None
+    min_profit: float | None
+
+
+@dataclass
+class SteamPriceOverview(TypedDict):
+    success: bool
+    lowest_price: NotRequired[str]
+    median_price: NotRequired[str]
+    volume: NotRequired[str]
+
+
 class RiskLevel(str, Enum):
     LOW = "LOW"
     MEDIUM = "MEDIUM"
@@ -152,18 +167,3 @@ class FlipOpportunity:
             f"({(self.profit_pct * 100):.2f}%)</b>\n"
             f"📦 Volume: {self.volume}"
         )
-
-
-@dataclass
-class WatchItem:
-    name: str
-    min_volume: int | None
-    min_profit: float | None
-
-
-@dataclass
-class SteamPriceOverview(TypedDict):
-    success: bool
-    lowest_price: NotRequired[str]
-    median_price: NotRequired[str]
-    volume: NotRequired[str]
