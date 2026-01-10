@@ -17,6 +17,9 @@ def setup_logging() -> None:
         ],
     )
 
+    # Configure project loggers
+    logging.getLogger("automarket.market").setLevel(logging.DEBUG)
+
     # Silence noisy libs
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("asyncio").setLevel(logging.WARNING)
