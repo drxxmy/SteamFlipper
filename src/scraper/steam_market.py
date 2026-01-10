@@ -60,7 +60,7 @@ class SteamMarketClient:
                 if resp.status_code != 200:
                     self.failures += 1
                     log.warning(
-                        "(%s) Steam HTTP %d",
+                        "❗ %s Steam HTTP %d",
                         market_hash_name,
                         resp.status_code,
                     )
@@ -70,18 +70,18 @@ class SteamMarketClient:
 
                 # Steam sometimes returns {"success": false}
                 if not data:
-                    log.warning("(%s) Empty response", market_hash_name)
+                    log.warning("❗ %s Empty response", market_hash_name)
                 elif not data.get("success"):
-                    log.warning("(%s) Steam rate-limited", market_hash_name)
+                    log.warning("❗ %s Steam rate-limited", market_hash_name)
 
                 if not data:
                     self.failures += 1
-                    log.warning("(%s) Empty response", market_hash_name)
+                    log.warning("❗ %s Empty response", market_hash_name)
                     return None
 
                 if not data.get("success"):
                     self.failures += 1
-                    log.warning("(%s) Steam rate-limited", market_hash_name)
+                    log.warning("❗ %s Steam rate-limited", market_hash_name)
                     return None
 
                 # Reset failures counter on success
@@ -91,7 +91,7 @@ class SteamMarketClient:
             except httpx.RequestError as e:
                 self.failures += 1
                 log.warning(
-                    "(%s) Network error %s %s: %r",
+                    "❗ %s Network error %s %s: %r",
                     market_hash_name,
                     e.request.method if e.request else "?",
                     e.request.url if e.request else "?",
@@ -101,7 +101,7 @@ class SteamMarketClient:
 
             except ValueError:
                 self.failures += 1
-                log.warning("(%s) Invalid JSON", market_hash_name)
+                log.warning("❗ %s Invalid JSON", market_hash_name)
                 return None
 
     async def close(self) -> None:
