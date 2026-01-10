@@ -46,6 +46,20 @@ class RiskLevel(str, Enum):
                 return "🔴"
 
 
+@dataclass(frozen=True)
+class FlipEvaluation:
+    profitable: bool
+    reject_reason: RejectReason | None
+
+    @property
+    def log_level(self) -> int:
+        return logging.INFO if self.profitable else logging.DEBUG
+
+    @property
+    def should_notify(self) -> bool:
+        return self.profitable
+
+
 @dataclass
 class FlipOpportunity:
     name: str
