@@ -11,7 +11,6 @@ from core.watchlist import load_watchlist
 from logs.logging import setup_logging
 from notifier.telegram import TelegramNotifier
 from scraper.steam_market import SteamMarketClient, build_opportunity
-from strategy.profit import is_profitable
 
 setup_logging()
 log = logging.getLogger("automarket.market")
@@ -26,20 +25,21 @@ async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:
         if not data:
             continue
 
-        opp = build_opportunity(item.name, data)
-        if not opp:
+        flip = build_opportunity(item.name, data)
+        if not flip:
             continue
 
-        # Check if opportunity is profitable
-        profitable = is_profitable(opp)
+        # Check if flip is profitable
+        profitable = flip.is_profitable()
+        viable = flip.is_viable()
 
-        # Log opportunity
-        fmt, args = opp.format_log(profitable)
+        # Log everything
+        fmt, args = flip.format_log(profitable)
         log.info(fmt, *args)
 
-        # Send Telegram message
-        if profitable and notifier:
-            notifier.notify_opportunity(opp)
+        # Notify only viable opportunities
+        if viable and notifier:
+            await notifier.notify_opportunity(flip)
 
 
 async def run() -> None:

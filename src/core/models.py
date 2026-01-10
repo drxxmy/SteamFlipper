@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import NotRequired, TypedDict
 
+from config.env import MIN_PROFIT, MIN_ROI, MIN_VOLUME, STEAM_FEE
+
 from .risks import RiskLevel
 
 MAX_NAME_LEN = 28
@@ -22,7 +24,7 @@ class FlipOpportunity:
         is actually received. This value represents the real, final profit
         (or loss) of a flip after buying and selling the item.
         """
-        return self.sell_price * 0.85 - self.buy_price
+        return self.sell_price * (1 - STEAM_FEE) - self.buy_price
 
     @property
     def profit_pct(self) -> float:
@@ -73,6 +75,24 @@ class FlipOpportunity:
         if len(self.name) <= MAX_NAME_LEN:
             return self.name
         return self.name[: MAX_NAME_LEN - 1] + "…"
+
+    def is_profitable(self) -> bool:
+        return self.net_profit > 0
+
+    def is_viable(self) -> bool:
+        if self.volume < MIN_VOLUME:
+            return False
+
+        if self.net_profit < MIN_PROFIT:
+            return False
+
+        if self.profit_pct < MIN_ROI:
+            return False
+
+        return True
+
+    def is_allowed(self) -> bool:
+        return self.risk_level != RiskLevel.HIGH
 
     def format_log(self, profitable: bool) -> tuple[str, tuple[object, ...]]:
         name_color = "green" if profitable else "red"
