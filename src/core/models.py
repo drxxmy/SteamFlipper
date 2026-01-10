@@ -3,8 +3,16 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import NotRequired, TypedDict
 
-from config.env import MIN_PROFIT, MIN_ROI, MIN_VOLUME, STEAM_FEE
-
+from config.env import (
+    MIN_PROFIT,
+    MIN_ROI,
+    MIN_VOLUME,
+    RISK_HIGH_MIN_VOLUME,
+    RISK_HIGH_SPREAD,
+    RISK_MEDIUM_MIN_VOLUME,
+    RISK_MEDIUM_SPREAD,
+    STEAM_FEE,
+)
 
 MAX_NAME_LEN = 28
 
@@ -105,19 +113,18 @@ class FlipOpportunity:
     @property
     def risk_level(self) -> RiskLevel:
         """
-        Classify risk based on liquidity and price spread.
+        Classify risk based on liquidity and spread.
         """
 
-        # Extremely wide spreads are almost always outliers
-        if self.spread_pct > 0.40:
+        # HIGH risk: likely traps / illiquid / fake spikes
+        if self.spread_pct >= RISK_HIGH_SPREAD or self.volume <= RISK_HIGH_MIN_VOLUME:
             return RiskLevel.HIGH
 
-        # Low volume = hard to exit position
-        if self.volume < 50:
-            return RiskLevel.HIGH
-
-        # Medium risk: still tradable, but watch closely
-        if self.spread_pct > 0.25 or self.volume < 150:
+        # MEDIUM risk: tradable but requires caution
+        if (
+            self.spread_pct >= RISK_MEDIUM_SPREAD
+            or self.volume <= RISK_MEDIUM_MIN_VOLUME
+        ):
             return RiskLevel.MEDIUM
 
         return RiskLevel.LOW
