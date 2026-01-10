@@ -26,19 +26,20 @@ async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:
             continue
 
         flip = build_opportunity(item.name, data)
+
+        # Skip if couldn't build a flip opportunity
         if not flip:
             continue
 
-        # Check if flip is profitable
-        profitable = flip.is_profitable()
-        viable = flip.is_viable()
+        # Evaluate flip
+        result = flip.evaluate()
 
-        # Log everything
-        fmt, args = flip.format_log(profitable)
-        log.info(fmt, *args)
+        # Log flip
+        fmt, args = flip.log_message(result)
+        log.log(result.log_level, fmt, *args)
 
-        # Notify only viable opportunities
-        if viable and notifier:
+        # Send notification in Telegram
+        if result.should_notify and notifier:
             await notifier.notify_opportunity(flip)
 
 

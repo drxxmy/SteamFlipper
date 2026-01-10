@@ -129,53 +129,55 @@ class FlipOpportunity:
 
         return RiskLevel.LOW
 
+    def evaluate(self) -> FlipEvaluation:
+        if self.risk_level == RiskLevel.HIGH:
+            return FlipEvaluation(False, RejectReason.HIGH_RISK)
+
+        if self.volume < MIN_VOLUME:
+            return FlipEvaluation(False, RejectReason.LOW_VOLUME)
+
+        if self.net_profit < MIN_PROFIT:
+            return FlipEvaluation(False, RejectReason.LOW_PROFIT)
+
+        if self.profit_pct < MIN_ROI:
+            return FlipEvaluation(False, RejectReason.LOW_ROI)
+
+        return FlipEvaluation(True, None)
+
     @property
     def short_name(self) -> str:
         if len(self.name) <= MAX_NAME_LEN:
             return self.name
         return self.name[: MAX_NAME_LEN - 1] + "…"
 
-    def is_profitable(self) -> bool:
-        return self.net_profit > 0
+    def log_message(self, result: FlipEvaluation) -> tuple[str, tuple]:
+        """
+        Returns a log message format and arguments.
+        """
+        if result.profitable:
+            return (
+                f"💰 %-{MAX_NAME_LEN}s | BUY %.2f SELL %.2f NET +%.2f ROI %.2f%% VOL %d RISK %s",
+                (
+                    self.short_name,
+                    self.buy_price,
+                    self.sell_price,
+                    self.net_profit,
+                    self.profit_pct * 100,
+                    self.volume,
+                    self.risk_level.value,
+                ),
+            )
 
-    def is_viable(self) -> bool:
-        if self.volume < MIN_VOLUME:
-            return False
-
-        if self.net_profit < MIN_PROFIT:
-            return False
-
-        if self.profit_pct < MIN_ROI:
-            return False
-
-        return True
-
-    def is_allowed(self) -> bool:
-        return self.risk_level != RiskLevel.HIGH
-
-    def format_log(self, profitable: bool) -> tuple[str, tuple[object, ...]]:
-        name_color = "green" if profitable else "red"
-        icon = "💰" if profitable else "❌"
-
-        risk_color = "green"
-        if self.risk_level == RiskLevel.MEDIUM:
-            risk_color = "yellow"
-        elif self.risk_level == RiskLevel.HIGH:
-            risk_color = "red"
+        reason = result.reject_reason.value if result.reject_reason else "—"
 
         return (
-            (
-                f"[{name_color}]{icon} %-{MAX_NAME_LEN}s[/{name_color}] "
-                f"BUY %7.2f → SELL %7.2f  "
-                f"NET %+8.2f  "
-                f"ROI %6.2f%%  "
-                f"VOL %6d  "
-                f"RISK [{risk_color}]%-6s[/{risk_color}]"
-            ),
+            f"❌ %-{MAX_NAME_LEN}s | [red]%s[/red] BUY %.2f SELL %.2f SPREAD %.3f NET +%.2f ROI %.2f%% VOL %d RISK %s",
             (
                 self.short_name,
+                reason,
                 self.buy_price,
                 self.sell_price,
+                self.spread_pct,
                 self.net_profit,
                 self.profit_pct * 100,
                 self.volume,
@@ -189,7 +191,7 @@ class FlipOpportunity:
         """
         return (
             f"<b>{self.name}</b>\n"
-            f"⚠️ Risk: <b>{self.risk_level.value}</b>\n"
+            f"{self.risk_level.badge()} Risk: <b>{self.risk_level.value}</b>\n"
             f"💳 Buy: {self.buy_price:.2f} ₽\n"
             f"💸 Sell: {self.sell_price:.2f} ₽\n"
             f"🤑 <b>Profit: +{self.net_profit:.2f} ₽ "
