@@ -1,5 +1,5 @@
-name: automarket
-project_root: "~/dev/steam/automarket"
+name: SteamFlipper
+project_root: "~/dev/steam/SteamFlipper"
 windows:
   - editor:
       panes:

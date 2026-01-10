@@ -1,4 +1,4 @@
-# Steam Auto Market (SAM)
+# Steam Flipper (SF)
 
 A Python service that periodically checks Steam Market prices for a predefined
 list of liquid CS2 items, calculates net profit after Steam fees, and sends
