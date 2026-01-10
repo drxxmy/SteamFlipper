@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from enum import Enum
 from typing import NotRequired, TypedDict
@@ -21,6 +22,13 @@ class SteamPriceOverview(TypedDict):
     lowest_price: NotRequired[str]
     median_price: NotRequired[str]
     volume: NotRequired[str]
+
+
+class RejectReason(str, Enum):
+    LOW_VOLUME = "LOW_VOLUME"
+    LOW_PROFIT = "LOW_PROFIT"
+    LOW_ROI = "LOW_ROI"
+    HIGH_RISK = "HIGH_RISK"
 
 
 class RiskLevel(str, Enum):
