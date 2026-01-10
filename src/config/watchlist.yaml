@@ -1,7 +1,11 @@
+# Example
+# items:
+#   - name: "Item Name"
+#     min_volume: 100 (Optional)
+#     min_profit: 5.0 (Optional)
 items:
   - name: "Fracture Case"
-    min_volume: 10000
-    min_profit: 2.0
+  - name: "Budapest 2025 Mirage Souvenir Package"
+  - name: "Sealed Genesis Terminal"
+  - name: "Gallery Case"
   - name: "AK-47 | Redline (Field-Tested)"
-    min_volume: 50
-    min_profit: 50.0
