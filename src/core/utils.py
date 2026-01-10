@@ -1,4 +1,5 @@
 import re
+from urllib.parse import quote
 
 _PRICE_RE = re.compile(r"[0-9]+(?:[.,][0-9]+)?")
 
@@ -16,3 +17,13 @@ def parse_price(price_str: str) -> float:
     match = _PRICE_RE.search(cleaned)
 
     return float(match.group()) if match else 0.0
+
+
+def steam_market_url(appid: int, market_hash_name: str) -> str:
+    """
+    Returns a Steam market URL for the specified appid and item name.
+    """
+    return (
+        f"https://steamcommunity.com/market/listings/"
+        f"{appid}/{quote(market_hash_name, safe='')}"
+    )
