@@ -171,7 +171,7 @@ class FlipOpportunity:
         reason = result.reject_reason.value if result.reject_reason else "—"
 
         return (
-            f"❌ %-{MAX_NAME_LEN}s | [red]%s[/red] BUY %.2f SELL %.2f SPREAD %.3f NET +%.2f ROI %.2f%% VOL %d RISK %s",
+            f"❌ %-{MAX_NAME_LEN}s | [red]%s[/red] BUY %.2f SELL %.2f SPREAD %.3f NET %.2f ROI %.2f%% VOL %d RISK %s",
             (
                 self.short_name,
                 reason,
