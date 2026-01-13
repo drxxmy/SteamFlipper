@@ -9,7 +9,7 @@ from core.env import (
     TELEGRAM_BOT_TOKEN,
     TELEGRAM_CHAT_ID,
 )
-from core.models import WatchlistItem
+from core.models import ScanResult, WatchlistItem
 from db.database import (
     already_notified,
     fetch_watchlist,
@@ -25,42 +25,55 @@ setup_logging()
 log = logging.getLogger("automarket.market")
 
 
+async def scan_item(
+    *,
+    db: aiosqlite.Connection,
+    client: SteamMarketClient,
+    notifier,
+    item: WatchlistItem
+) -> ScanResult | None:
+    # Fetch data for a specific item
+    data = await client.fetch(item.app_id, item.item_name)
+
+    # Skip if data was not fetched
+    if not data:
+        return None
+
+    flip = build_opportunity(item.item_name, data)
+
+    # Skip if couldn't build a flip opportunity
+    if not flip:
+        return None
+
+    # Evaluate flip
+    result = flip.evaluate()
+    await save_opportunity(db, flip, result)
+
+    # Send notification in Telegram
+    if result.should_notify and notifier:
+        if not await already_notified(db, flip.name):
+            await notifier.notify_opportunity(item.app_id, flip)
+            await mark_notified(db, flip.name)
+
+    return ScanResult(flip, result)
+
+
 async def scan_once(
     client: SteamMarketClient, notifier, watchlist: list[WatchlistItem]
 ) -> None:
-    for item in watchlist:
-        # Fetch data for a specific item
-        data = await client.fetch(item.app_id, item.item_name)
+    async with aiosqlite.connect(DB_PATH) as db:
+        for item in watchlist:
+            result = await scan_item(db=db, client=client, notifier=notifier, item=item)
 
-        await asyncio.sleep(1.5)  # 1–2 seconds is safe
-
-        # Skip if data was not fetched
-        if not data:
-            continue
-
-        flip = build_opportunity(item.item_name, data)
-
-        # Skip if couldn't build a flip opportunity
-        if not flip:
-            continue
-
-        async with aiosqlite.connect(DB_PATH) as db:
-            # Evaluate flip
-            result = flip.evaluate()
-
-            await save_opportunity(db, flip, result)
+            if not result:
+                continue
 
             # Log flip
-            fmt, args = flip.log_message(result)
-            log.log(result.log_level, fmt, *args)
+            fmt, args = result.flip.log_message(result.evaluation)
+            log.log(result.evaluation.log_level, fmt, *args)
 
-            # Send notification in Telegram
-            if result.should_notify and notifier:
-                if not await already_notified(db, flip.name):
-                    await notifier.notify_opportunity(item.app_id, flip)
-                    await mark_notified(db, flip.name)
-                else:
-                    log.debug("⏱ %s skipped (cooldown)", flip.name)
+            if await already_notified(db, result.flip.name):
+                log.debug("⏱ %s skipped (cooldown)", result.flip.name)
 
             await db.commit()
 
