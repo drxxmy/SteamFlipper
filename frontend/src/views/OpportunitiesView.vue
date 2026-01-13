@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAsyncState, useIntervalFn } from "@vueuse/core";
+import SortableTh from "@/components/SortableTh.vue";
 import { fetchOpportunities, type Opportunity } from "@/api/opportunities";
 
 /* ---------------- sorting state ---------------- */
@@ -81,60 +82,59 @@ function riskBadge(risk: string) {
       <table class="min-w-full text-sm">
         <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-100">
           <tr>
-            <th
-              class="py-3 px-4 text-left cursor-pointer select-none"
-              @click="sortBy('item_name')"
-            >
-              Item
-              <span v-if="sortKey === 'item_name'">
-                {{ sortDir === "asc" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              class="py-3 px-4 text-right cursor-pointer select-none"
-              @click="sortBy('buy_price')"
-            >
-              Buy
-              <span v-if="sortKey === 'buy_price'">
-                {{ sortDir === "asc" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              class="py-3 px-4 text-right cursor-pointer select-none"
-              @click="sortBy('sell_price')"
-            >
-              Sell
-              <span v-if="sortKey === 'sell_price'">
-                {{ sortDir === "asc" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              class="py-3 px-4 text-right cursor-pointer select-none"
-              @click="sortBy('net_profit')"
-            >
-              Profit
-              <span v-if="sortKey === 'net_profit'">
-                {{ sortDir === "asc" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              class="py-3 px-4 text-right cursor-pointer select-none"
-              @click="sortBy('profit_pct')"
-            >
-              ROI
-              <span v-if="sortKey === 'profit_pct'">
-                {{ sortDir === "asc" ? "▲" : "▼" }}
-              </span>
-            </th>
-            <th
-              class="py-3 px-4 text-right cursor-pointer select-none"
-              @click="sortBy('volume')"
-            >
-              Volume
-              <span v-if="sortKey === 'volume'">
-                {{ sortDir === "asc" ? "▲" : "▼" }}
-              </span>
-            </th>
+            <SortableTh
+              label="Item"
+              field="item_name"
+              align="left"
+              :sort-key="sortKey"
+              :sort-dir="sortDir"
+              @sort="sortBy"
+            />
+
+            <SortableTh
+              label="Buy"
+              field="buy_price"
+              align="right"
+              :sort-key="sortKey"
+              :sort-dir="sortDir"
+              @sort="sortBy"
+            />
+
+            <SortableTh
+              label="Sell"
+              field="sell_price"
+              align="right"
+              :sort-key="sortKey"
+              :sort-dir="sortDir"
+              @sort="sortBy"
+            />
+
+            <SortableTh
+              label="Profit"
+              field="net_profit"
+              align="right"
+              :sort-key="sortKey"
+              :sort-dir="sortDir"
+              @sort="sortBy"
+            />
+
+            <SortableTh
+              label="ROI"
+              field="profit_pct"
+              align="right"
+              :sort-key="sortKey"
+              :sort-dir="sortDir"
+              @sort="sortBy"
+            />
+
+            <SortableTh
+              label="Volume"
+              field="volume"
+              align="right"
+              :sort-key="sortKey"
+              :sort-dir="sortDir"
+              @sort="sortBy"
+            />
             <th class="py-3 px-4 text-center">Risk</th>
           </tr>
         </thead>
