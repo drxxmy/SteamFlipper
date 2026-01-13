@@ -197,6 +197,6 @@ function riskBadge(risk: string) {
         </tbody>
       </table>
     </div>
-    <AddWatchlist />
+    <AddWatchlist @added="refresh" />
   </div>
 </template>
