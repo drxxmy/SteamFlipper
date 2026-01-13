@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import NotRequired, TypedDict
 
-from config.env import (
+from core.env import (
     MIN_PROFIT,
     MIN_ROI,
     MIN_VOLUME,

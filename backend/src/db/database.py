@@ -3,7 +3,7 @@ from typing import Iterable
 
 import aiosqlite
 
-from config.env import DB_PATH, NOTIFY_COOLDOWN_MINUTES
+from core.env import DB_PATH, NOTIFY_COOLDOWN_MINUTES
 from core.models import FlipEvaluation, FlipOpportunity, WatchlistItem
 from core.utils import parse_steam_market_url
 

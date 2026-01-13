@@ -3,7 +3,7 @@ import logging
 
 import aiosqlite
 
-from config.env import (
+from core.env import (
     CHECK_INTERVAL_SECONDS,
     DB_PATH,
     TELEGRAM_BOT_TOKEN,
