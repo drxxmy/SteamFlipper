@@ -45,7 +45,7 @@ const {
   execute: refresh,
 } = useAsyncState<Opportunity[]>(fetchOpportunities, [], { immediate: true });
 
-// useIntervalFn(refresh, 15_000); // Auto-refresh
+useIntervalFn(refresh, 15_000); // Auto-refresh every 15 seconds
 
 /* ---------------- helpers ---------------- */
 
