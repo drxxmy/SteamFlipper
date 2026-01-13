@@ -48,7 +48,6 @@
 
           enterShell = ''
             echo "❄️ Started Steam Market devshell"
-            tmuxinator local
           '';
         };
       };
