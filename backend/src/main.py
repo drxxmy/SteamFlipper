@@ -32,6 +32,8 @@ async def scan_once(
         # Fetch data for a specific item
         data = await client.fetch(item.appid, item.market_hash_name)
 
+        await asyncio.sleep(1.5)  # 1–2 seconds is safe
+
         # Skip if data was not fetched
         if not data:
             continue
