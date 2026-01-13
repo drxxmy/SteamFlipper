@@ -17,7 +17,7 @@ type SortKey =
   | "volume"
   | "risk_level";
 
-const sortKey = ref<SortKey>("net_profit");
+const sortKey = ref<SortKey>("profit_pct");
 const sortDir = ref<"asc" | "desc">("desc");
 
 /* ---------------- sorted list of items ---------------- */
