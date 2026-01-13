@@ -1,14 +1,61 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { useAsyncState, useIntervalFn } from "@vueuse/core";
 import { fetchOpportunities, type Opportunity } from "@/api/opportunities";
 
-const items = ref<Opportunity[]>([]);
-const loading = ref(true);
+/* ---------------- sorting state ---------------- */
 
-onMounted(async () => {
-  items.value = await fetchOpportunities();
-  loading.value = false;
+import { computed, ref } from "vue";
+
+type SortKey =
+  | "item_name"
+  | "buy_price"
+  | "sell_price"
+  | "net_profit"
+  | "profit_pct"
+  | "volume"
+  | "risk_level";
+
+const sortKey = ref<SortKey>("net_profit");
+const sortDir = ref<"asc" | "desc">("desc");
+
+/* ---------------- sorted list of items ---------------- */
+
+const sortedItems = computed(() => {
+  return [...items.value].sort((a, b) => {
+    const key = sortKey.value;
+    const dir = sortDir.value === "asc" ? 1 : -1;
+
+    const av = a[key];
+    const bv = b[key];
+
+    if (typeof av === "number" && typeof bv === "number") {
+      return (av - bv) * dir;
+    }
+
+    return String(av).localeCompare(String(bv)) * dir;
+  });
 });
+
+/* ---------------- data ---------------- */
+
+const {
+  state: items,
+  isLoading: loading,
+  execute: refresh,
+} = useAsyncState<Opportunity[]>(fetchOpportunities, [], { immediate: true });
+
+// useIntervalFn(refresh, 15_000); // Auto-refresh
+
+/* ---------------- helpers ---------------- */
+
+function sortBy(key: SortKey) {
+  if (sortKey.value === key) {
+    sortDir.value = sortDir.value === "asc" ? "desc" : "asc";
+  } else {
+    sortKey.value = key;
+    sortDir.value = "desc";
+  }
+}
 
 function riskBadge(risk: string) {
   switch (risk) {
@@ -34,20 +81,68 @@ function riskBadge(risk: string) {
       <table class="min-w-full text-sm">
         <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-100">
           <tr>
-            <th class="py-3 px-4 text-left">Item</th>
-            <th class="py-3 px-4 text-right">Buy</th>
-            <th class="py-3 px-4 text-right">Sell</th>
-            <th class="py-3 px-4 text-right">Profit</th>
-            <th class="py-3 px-4 text-right">ROI</th>
-            <th class="py-3 px-4 text-right">Volume</th>
+            <th
+              class="py-3 px-4 text-left cursor-pointer select-none"
+              @click="sortBy('item_name')"
+            >
+              Item
+              <span v-if="sortKey === 'item_name'">
+                {{ sortDir === "asc" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              class="py-3 px-4 text-right cursor-pointer select-none"
+              @click="sortBy('buy_price')"
+            >
+              Buy
+              <span v-if="sortKey === 'buy_price'">
+                {{ sortDir === "asc" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              class="py-3 px-4 text-right cursor-pointer select-none"
+              @click="sortBy('sell_price')"
+            >
+              Sell
+              <span v-if="sortKey === 'sell_price'">
+                {{ sortDir === "asc" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              class="py-3 px-4 text-right cursor-pointer select-none"
+              @click="sortBy('net_profit')"
+            >
+              Profit
+              <span v-if="sortKey === 'net_profit'">
+                {{ sortDir === "asc" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              class="py-3 px-4 text-right cursor-pointer select-none"
+              @click="sortBy('profit_pct')"
+            >
+              ROI
+              <span v-if="sortKey === 'profit_pct'">
+                {{ sortDir === "asc" ? "▲" : "▼" }}
+              </span>
+            </th>
+            <th
+              class="py-3 px-4 text-right cursor-pointer select-none"
+              @click="sortBy('volume')"
+            >
+              Volume
+              <span v-if="sortKey === 'volume'">
+                {{ sortDir === "asc" ? "▲" : "▼" }}
+              </span>
+            </th>
             <th class="py-3 px-4 text-center">Risk</th>
           </tr>
         </thead>
 
         <tbody class="divide-y divide-gray-200">
           <tr
-            v-for="item in items"
-            :key="item.item_name"
+            v-for="item in sortedItems"
+            :key="item.id"
             class="hover:bg-gray-50"
           >
             <td class="py-2 px-4 font-medium whitespace-nowrap">
