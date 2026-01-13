@@ -49,6 +49,14 @@ useIntervalFn(refresh, 15_000); // Auto-refresh every 15 seconds
 
 /* ---------------- helpers ---------------- */
 
+function openSteam(item_name: string) {
+  window.open(
+    "https://steamcommunity.com/market/listings/730/" + item_name,
+    "_blank",
+    "noopener,noreferrer",
+  );
+}
+
 function sortBy(key: SortKey) {
   if (sortKey.value === key) {
     sortDir.value = sortDir.value === "asc" ? "desc" : "asc";
@@ -143,7 +151,8 @@ function riskBadge(risk: string) {
           <tr
             v-for="item in sortedItems"
             :key="item.id"
-            class="hover:bg-gray-50"
+            class="hover:bg-gray-200 hover:cursor-pointer"
+            @click="openSteam(item.item_name)"
           >
             <td class="py-2 px-4 font-medium whitespace-nowrap">
               {{ item.item_name }}
