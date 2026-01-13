@@ -36,7 +36,7 @@ async def list_opportunities(
             params.append(int(profitable))
 
         query += """
-        ORDER BY net_profit DESC
+        ORDER BY profit_pct DESC
         LIMIT ?
         """
         params.append(limit)
