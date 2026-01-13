@@ -115,3 +115,10 @@ async def save_opportunity(
             datetime.now(UTC),
         ),
     )
+
+
+async def fetch_all(query: str, params: tuple = ()) -> list[dict]:
+    async with aiosqlite.connect(DB_PATH) as db:
+        db.row_factory = aiosqlite.Row
+        rows = await db.execute_fetchall(query, params)
+        return [dict(row) for row in rows]
