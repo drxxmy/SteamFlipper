@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from core.env import DB_PATH
 from db.database import Database
-from main import log, scan_item
+from main import scan_item
 from scraper.steam_market import SteamMarketClient
 
 router = APIRouter(prefix="/watchlist", tags=["watchlist"])
@@ -35,8 +35,5 @@ async def add_watchlist_and_scan(
         if not result:
             return
 
-        # Log flip
-        fmt, args = result.flip.log_message(result.evaluation)
-        log.log(result.evaluation.log_level, fmt, *args)
         await db.commit()
         return {"opportunity": result.to_dict() if result else None}
