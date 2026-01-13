@@ -22,7 +22,7 @@ const isActive = computed(() => props.sortKey === props.field);
 <template>
   <th
     @click="emit('sort', field)"
-    class="py-3 px-4 whitespace-nowrap cursor-pointer select-none"
+    class="py-3 px-4 whitespace-nowrap cursor-pointer select-none hover:bg-gray-200"
     :class="{
       'text-left': align === 'left',
       'text-right': align === 'right',
