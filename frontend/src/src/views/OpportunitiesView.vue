@@ -48,9 +48,9 @@ const { state: items, isLoading: loading } = useAsyncState<Opportunity[]>(
 
 /* ---------------- helpers ---------------- */
 
-function openSteam(item_name: string) {
+function openSteam(item: Opportunity) {
   window.open(
-    "https://steamcommunity.com/market/listings/730/" + item_name,
+    `https://steamcommunity.com/market/listings/${item.app_id}/${item.item_name}`,
     "_blank",
     "noopener,noreferrer",
   );
@@ -160,7 +160,7 @@ function onAdded(opportunity: Opportunity | null) {
             v-for="item in sortedItems"
             :key="item.id"
             class="hover:cursor-pointer hover:bg-panel-light"
-            @click="openSteam(item.item_name)"
+            @click="openSteam(item)"
           >
             <td class="py-2 px-4 font-medium whitespace-nowrap">
               {{ item.item_name }}

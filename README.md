@@ -1,7 +1,7 @@
 # Steam Flipper (SF)
 
-Steam Flipper is a **CS2 Steam Market flip scanner** with a backend price analyzer
-and a lightweight web frontend.
+Steam Flipper is a **Steam Market flip scanner** with a backend price analyzer and
+a lightweight web frontend.
 
 It monitors selected Steam Market items, evaluates potential flip profitability
 (after fees), stores historical data, and notifies you when opportunities appear.

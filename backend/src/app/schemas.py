@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 class OpportunityOut(BaseModel):
     id: int
+    app_id: int
     item_name: str
     buy_price: float
     sell_price: float

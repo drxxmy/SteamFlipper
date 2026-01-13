@@ -36,6 +36,7 @@ class Database:
 
                 CREATE TABLE IF NOT EXISTS opportunities (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    app_id INTEGER NOT NULL,
                     item_name TEXT NOT NULL,
                     buy_price REAL NOT NULL,
                     sell_price REAL NOT NULL,
@@ -125,12 +126,14 @@ class Database:
 
     async def save_opportunity(
         self,
+        app_id: int,
         flip: FlipOpportunity,
         evaluation: FlipEvaluation,
     ) -> None:
         await self.execute(
             """
             INSERT INTO opportunities (
+                app_id,
                 item_name,
                 buy_price,
                 sell_price,
@@ -143,9 +146,10 @@ class Database:
                 reject_reason,
                 detected_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
+                app_id,
                 flip.name,
                 flip.buy_price,
                 flip.sell_price,

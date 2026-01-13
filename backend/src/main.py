@@ -41,7 +41,7 @@ async def scan_item(
 
     # Evaluate flip
     result = flip.evaluate()
-    await db.save_opportunity(flip, result)
+    await db.save_opportunity(item.app_id, flip, result)
 
     # Send notification in Telegram
     if result.should_notify and notifier:
@@ -49,7 +49,7 @@ async def scan_item(
             await notifier.notify_opportunity(item.app_id, flip)
             await db.mark_notified(flip.name)
 
-    return ScanResult(flip, result)
+    return ScanResult(item.app_id, flip, result)
 
 
 async def scan_once(

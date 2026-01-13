@@ -205,11 +205,13 @@ class FlipOpportunity:
 
 @dataclass(slots=True)
 class ScanResult:
+    app_id: int
     flip: FlipOpportunity
     evaluation: FlipEvaluation
 
     def to_dict(self):
         return {
+            "app_id": self.app_id,
             "item_name": self.flip.name,
             "buy_price": self.flip.buy_price,
             "sell_price": self.flip.sell_price,
