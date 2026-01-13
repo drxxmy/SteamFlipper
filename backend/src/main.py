@@ -76,6 +76,7 @@ async def scan_once(
                 log.debug("⏱ %s skipped (cooldown)", result.flip.name)
 
             await conn.commit()
+            await asyncio.sleep(1.5)  # Sleep for 1.5 seconds before next scan
 
 
 async def run() -> None:
