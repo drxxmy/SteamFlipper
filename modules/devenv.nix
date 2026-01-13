@@ -13,7 +13,7 @@
           languages.nix.enable = true;
           languages.python = {
             enable = true;
-            directory = "./src";
+            directory = "./backend";
             uv = {
               enable = true;
               sync.enable = true;
