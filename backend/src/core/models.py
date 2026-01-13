@@ -201,3 +201,9 @@ class FlipOpportunity:
             f"({(self.profit_pct * 100):.2f}%)</b>\n"
             f"📦 Volume: {self.volume}"
         )
+
+
+@dataclass(slots=True)
+class ScanResult:
+    flip: FlipOpportunity
+    evaluation: FlipEvaluation
