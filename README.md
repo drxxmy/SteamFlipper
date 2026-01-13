@@ -1,43 +1,102 @@
 # Steam Flipper (SF)
 
-A Python service that periodically checks Steam Market prices for a predefined
-list of liquid CS2 items, calculates net profit after Steam fees, and sends
-Telegram notifications when profitable flip opportunities appear.
+Steam Flipper is a **CS2 Steam Market flip scanner** with a backend price analyzer
+and a lightweight web frontend.
 
-## Money loop
+It monitors selected Steam Market items, evaluates potential flip profitability
+(after fees), stores historical data, and notifies you when opportunities appear.
 
-### Manual
+---
 
-- Bot scans Steam Market for profitable flips
-- Bot sends Telegram alert
-- User manually buys & sells
+## Features
 
-### Automated
+### Backend (Python)
 
-- User enables auto-flip mode
-- Bot buys & lists items automatically
-- Bot notifies on each operation
+* Periodically scans Steam Market prices
+* Calculates net profit and ROI after Steam fees
+* Risk classification based on liquidity & spread
+* Duplicate and cooldown-based notification suppression
+* Stores all scan results in SQLite
+* Sends Telegram notifications for viable flips
+* Watchlist stored in database
 
-## MVP constraints
+### Frontend (Vue.js)
 
-| Area | Limit |
-| ------------- | -------------- |
-| Items tracked | 20-50 |
-| Steam endpoints | priceoverview only |
-| Storage | None |
-| Auto-buy | No |
-| UI | No |
+* Displays detected flip opportunities
+* Sortable and readable table UI
+* Add items to the watchlist directly from the UI
+* Open Steam Market listings from table rows
 
-## How to Run?
+---
 
-Sync dependencies using `uv` package manager:
+## Tech Stack
+
+* **Backend**: Python, FastAPI, SQLite, aiosqlite
+* **Frontend**: Vue 3, Vite, Tailwind CSS
+* **Notifications**: Telegram Bot API
+* **Dev Environment**: Nix, devenv, direnv
+
+---
+
+## Running the Project
+
+### Prerequisites
+
+* `nix` installed
+* [Nix flakes](https://nixos.wiki/wiki/flakes) enabled
+* `direnv` installed
+
+---
+
+### 1. Clone the repository
 
 ```bash
-uv sync
+git clone https://codeberg.org/dreamy/steam-flipper.git
+cd steam-flipper
 ```
 
-Run script:
+---
+
+### 2. Allow direnv
 
 ```bash
-python main.py
+direnv allow
 ```
+
+This will automatically set up:
+
+* Python virtual environment
+* Node / pnpm
+* All required dependencies
+
+---
+
+### 3. Start all services
+
+```bash
+devenv up
+```
+
+This launches:
+
+* FastAPI backend
+* Market scanner
+* Vue frontend
+
+---
+
+## Project Structure (simplified)
+
+```bash
+.
+├── backend/        # Python backend (Market scanner + FastAPI)
+├── frontend/       # Vue.js frontend
+└── flake.nix       # Nix + devenv config
+```
+
+---
+
+## Disclaimer
+
+This project is for **educational and research purposes**.
+Steam Market behavior may change, and no guarantees of profitability are provided.
