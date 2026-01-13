@@ -35,6 +35,7 @@ class RejectReason(str, Enum):
     LOW_VOLUME = "LOW_VOLUME"
     LOW_PROFIT = "LOW_PROFIT"
     LOW_ROI = "LOW_ROI"
+    NEGATIVE_ROI = "NEGATIVE_ROI"
     HIGH_RISK = "HIGH_RISK"
 
 
@@ -129,6 +130,9 @@ class FlipOpportunity:
         return RiskLevel.LOW
 
     def evaluate(self) -> FlipEvaluation:
+        if self.profit_pct < 0:
+            return FlipEvaluation(False, RejectReason.NEGATIVE_ROI)
+
         if self.risk_level == RiskLevel.HIGH:
             return FlipEvaluation(False, RejectReason.HIGH_RISK)
 
