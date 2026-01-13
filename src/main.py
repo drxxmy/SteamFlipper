@@ -1,6 +1,8 @@
 import asyncio
 import logging
 
+import aiosqlite
+
 from config.env import (
     APP_ID,
     CHECK_INTERVAL_SECONDS,
@@ -8,6 +10,13 @@ from config.env import (
     TELEGRAM_CHAT_ID,
 )
 from core.watchlist import load_watchlist
+from db.database import (
+    DB_PATH,
+    already_notified,
+    init_db,
+    mark_notified,
+    save_opportunity,
+)
 from logs.logging import setup_logging
 from notifier.telegram import TelegramNotifier
 from scraper.steam_market import SteamMarketClient, build_opportunity
@@ -31,19 +40,29 @@ async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:
         if not flip:
             continue
 
-        # Evaluate flip
-        result = flip.evaluate()
+        async with aiosqlite.connect(DB_PATH) as db:
+            # Evaluate flip
+            result = flip.evaluate()
 
-        # Log flip
-        fmt, args = flip.log_message(result)
-        log.log(result.log_level, fmt, *args)
+            await save_opportunity(db, flip, result)
 
-        # Send notification in Telegram
-        if result.should_notify and notifier:
-            await notifier.notify_opportunity(flip)
+            # Log flip
+            fmt, args = flip.log_message(result)
+            log.log(result.log_level, fmt, *args)
+
+            # Send notification in Telegram
+            if result.should_notify and notifier:
+                if not await already_notified(db, flip.name):
+                    await notifier.notify_opportunity(flip)
+                    await mark_notified(db, flip.name)
+                else:
+                    log.debug("⏱ %s skipped (cooldown)", flip.name)
+
+            await db.commit()
 
 
 async def run() -> None:
+    await init_db()
     client = SteamMarketClient(currency=5)
     notifier = None
     if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
