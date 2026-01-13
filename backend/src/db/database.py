@@ -1,12 +1,9 @@
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
 
 import aiosqlite
 
-from config.env import NOTIFY_COOLDOWN_MINUTES
+from config.env import DB_PATH, NOTIFY_COOLDOWN_MINUTES
 from core.models import FlipEvaluation, FlipOpportunity
-
-DB_PATH = Path("./src/db/steamflipper.db")
 
 
 async def init_db() -> None:

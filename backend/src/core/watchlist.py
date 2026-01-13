@@ -1,10 +1,11 @@
 import yaml
 
+from config.env import WATCHLIST_PATH
 from core.models import WatchItem
 
 
-def load_watchlist(path="src/config/watchlist.yaml") -> list[WatchItem]:
-    with open(path, "r") as f:
+def load_watchlist() -> list[WatchItem]:
+    with open(WATCHLIST_PATH, "r") as f:
         data = yaml.safe_load(f)
 
     return [

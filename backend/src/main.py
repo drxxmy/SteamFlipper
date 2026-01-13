@@ -6,17 +6,12 @@ import aiosqlite
 from config.env import (
     APP_ID,
     CHECK_INTERVAL_SECONDS,
+    DB_PATH,
     TELEGRAM_BOT_TOKEN,
     TELEGRAM_CHAT_ID,
 )
 from core.watchlist import load_watchlist
-from db.database import (
-    DB_PATH,
-    already_notified,
-    init_db,
-    mark_notified,
-    save_opportunity,
-)
+from db.database import already_notified, init_db, mark_notified, save_opportunity
 from logs.logging import setup_logging
 from notifier.telegram import TelegramNotifier
 from scraper.steam_market import SteamMarketClient, build_opportunity

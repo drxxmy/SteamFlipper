@@ -13,7 +13,7 @@
           languages.nix.enable = true;
           languages.python = {
             enable = true;
-            directory = "./backend";
+            directory = "./backend/src";
             uv = {
               enable = true;
               sync.enable = true;
@@ -28,6 +28,21 @@
               end-of-file-fixer.enable = true;
               flake-checker.enable = true;
               black.enable = true;
+            };
+          };
+
+          processes = {
+            fastapi = {
+              cwd = "./backend/src";
+              exec = "uvicorn app.main:app --reload";
+            };
+            steamflipper = {
+              cwd = "./backend/src";
+              exec = "python main.py";
+            };
+            vue-website = {
+              cwd = "./frontend/src";
+              exec = "pnpm run dev";
             };
           };
 

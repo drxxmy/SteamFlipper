@@ -15,6 +15,6 @@ __pycache__/
 *.pyc
 
 # DB
-src/db/*.db
-src/db/*.db-shm
-src/db/*.db-wal
+*.db
+*.db-shm
+*.db-wal
