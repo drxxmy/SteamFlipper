@@ -25,7 +25,7 @@ async function submit() {
     <button
       @click="submit"
       :disabled="loading"
-      class="py-2 px-4 font-semibold text-black rounded-lg bg-red"
+      class="py-2 px-4 font-semibold rounded-lg border transition text-text bg-panel border-border hover:bg-panel-light"
     >
       Add
     </button>
