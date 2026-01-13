@@ -6,6 +6,10 @@
     {
       devenv.shells = {
         default = {
+          packages = with pkgs; [
+            pnpm
+            nodejs
+          ];
           languages.nix.enable = true;
           languages.python = {
             enable = true;
