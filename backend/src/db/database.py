@@ -140,7 +140,7 @@ async def execute(query: str, params: Iterable = ()) -> None:
         await db.commit()
 
 
-async def add_watchlist_item(url: str) -> None:
+async def add_watchlist_item(url: str) -> WatchlistItem:
     app_id, item_name = parse_steam_market_url(url)
 
     await execute(
@@ -149,6 +149,11 @@ async def add_watchlist_item(url: str) -> None:
         VALUES (?, ?)
         """,
         (app_id, item_name),
+    )
+
+    return WatchlistItem(
+        app_id=app_id,
+        item_name=item_name,
     )
 
 
