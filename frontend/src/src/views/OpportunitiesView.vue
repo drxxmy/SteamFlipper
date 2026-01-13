@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAsyncState, useIntervalFn } from "@vueuse/core";
 import SortableTh from "@/components/SortableTh.vue";
+import AddWatchlist from "@/components/AddWatchlist.vue";
 import { fetchOpportunities, type Opportunity } from "@/api/opportunities";
 
 /* ---------------- sorting state ---------------- */
@@ -86,7 +87,7 @@ function riskBadge(risk: string) {
 
     <div v-if="loading" class="text-muted">Loading…</div>
 
-    <div v-else class="overflow-x-auto rounded-lg border border-border">
+    <div v-else class="overflow-x-auto my-2 rounded-lg border border-border">
       <table class="min-w-full text-sm">
         <thead class="sticky top-0 text-xs uppercase text-muted bg-panel">
           <tr>
@@ -196,5 +197,6 @@ function riskBadge(risk: string) {
         </tbody>
       </table>
     </div>
+    <AddWatchlist />
   </div>
 </template>

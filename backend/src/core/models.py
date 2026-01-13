@@ -17,11 +17,10 @@ from config.env import (
 MAX_NAME_LEN = 28
 
 
-@dataclass
-class WatchItem:
-    name: str
-    min_volume: int | None
-    min_profit: float | None
+@dataclass(slots=True)
+class WatchlistItem:
+    appid: int
+    market_hash_name: str
 
 
 @dataclass

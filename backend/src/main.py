@@ -4,14 +4,19 @@ import logging
 import aiosqlite
 
 from config.env import (
-    APP_ID,
     CHECK_INTERVAL_SECONDS,
     DB_PATH,
     TELEGRAM_BOT_TOKEN,
     TELEGRAM_CHAT_ID,
 )
-from core.watchlist import load_watchlist
-from db.database import already_notified, init_db, mark_notified, save_opportunity
+from core.models import WatchlistItem
+from db.database import (
+    already_notified,
+    fetch_watchlist,
+    init_db,
+    mark_notified,
+    save_opportunity,
+)
 from logs.logging import setup_logging
 from notifier.telegram import TelegramNotifier
 from scraper.steam_market import SteamMarketClient, build_opportunity
@@ -20,16 +25,18 @@ setup_logging()
 log = logging.getLogger("automarket.market")
 
 
-async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:
+async def scan_once(
+    client: SteamMarketClient, notifier, watchlist: list[WatchlistItem]
+) -> None:
     for item in watchlist:
         # Fetch data for a specific item
-        data = await client.fetch(APP_ID, item.name)
+        data = await client.fetch(item.appid, item.market_hash_name)
 
         # Skip if data was not fetched
         if not data:
             continue
 
-        flip = build_opportunity(item.name, data)
+        flip = build_opportunity(item.market_hash_name, data)
 
         # Skip if couldn't build a flip opportunity
         if not flip:
@@ -48,7 +55,7 @@ async def scan_once(client: SteamMarketClient, notifier, watchlist) -> None:
             # Send notification in Telegram
             if result.should_notify and notifier:
                 if not await already_notified(db, flip.name):
-                    await notifier.notify_opportunity(flip)
+                    await notifier.notify_opportunity(item.appid, flip)
                     await mark_notified(db, flip.name)
                 else:
                     log.debug("⏱ %s skipped (cooldown)", flip.name)
@@ -66,12 +73,16 @@ async def run() -> None:
             TELEGRAM_CHAT_ID,
         )
 
-    watchlist = load_watchlist()
-
     try:
         while True:
             log.info("🔄 Starting market scan")
-            await scan_once(client, notifier, watchlist)
+            watchlist = await fetch_watchlist()
+
+            if not watchlist:
+                log.warning("⚠️ Watchlist is empty")
+            else:
+                await scan_once(client, notifier, watchlist)
+
             log.info("😴 Sleeping for %d seconds", CHECK_INTERVAL_SECONDS)
             await asyncio.sleep(CHECK_INTERVAL_SECONDS)
 

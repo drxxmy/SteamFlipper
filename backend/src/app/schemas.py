@@ -17,3 +17,13 @@ class OpportunityOut(BaseModel):
     profitable: bool
     reject_reason: Optional[str]
     detected_at: datetime
+
+
+class WatchlistIn(BaseModel):
+    appid: int
+    market_hash_name: str
+
+
+class WatchlistOut(WatchlistIn):
+    id: int
+    added_at: datetime

@@ -1,9 +1,11 @@
 from datetime import UTC, datetime, timedelta
+from typing import Iterable
 
 import aiosqlite
 
 from config.env import DB_PATH, NOTIFY_COOLDOWN_MINUTES
-from core.models import FlipEvaluation, FlipOpportunity
+from core.models import FlipEvaluation, FlipOpportunity, WatchlistItem
+from core.utils import parse_steam_market_url
 
 
 async def init_db() -> None:
@@ -33,6 +35,17 @@ async def init_db() -> None:
                 sell_price REAL NOT NULL,
                 notified_at DATETIME NOT NULL,
                 PRIMARY KEY (item_name, buy_price, sell_price)
+            );
+
+            CREATE TABLE IF NOT EXISTS watchlist (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+              appid INTEGER NOT NULL,
+              market_hash_name TEXT NOT NULL,
+
+              created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+              UNIQUE (appid, market_hash_name)
             );
             """
         )
@@ -119,3 +132,39 @@ async def fetch_all(query: str, params: tuple = ()) -> list[dict]:
         db.row_factory = aiosqlite.Row
         rows = await db.execute_fetchall(query, params)
         return [dict(row) for row in rows]
+
+
+async def execute(query: str, params: Iterable = ()) -> None:
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute(query, params)
+        await db.commit()
+
+
+async def add_watchlist_item(url: str) -> None:
+    appid, market_hash_name = parse_steam_market_url(url)
+
+    await execute(
+        """
+        INSERT OR IGNORE INTO watchlist (appid, market_hash_name)
+        VALUES (?, ?)
+        """,
+        (appid, market_hash_name),
+    )
+
+
+async def fetch_watchlist() -> list[WatchlistItem]:
+    rows = await fetch_all(
+        """
+        SELECT appid, market_hash_name
+        FROM watchlist
+        ORDER BY created_at ASC
+        """
+    )
+
+    return [
+        WatchlistItem(
+            appid=row["appid"],
+            market_hash_name=row["market_hash_name"],
+        )
+        for row in rows
+    ]

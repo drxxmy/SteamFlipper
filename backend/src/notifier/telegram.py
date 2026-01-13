@@ -3,7 +3,6 @@ import logging
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
 
-from config.env import APP_ID
 from core.models import FlipOpportunity
 from core.utils import steam_market_url
 
