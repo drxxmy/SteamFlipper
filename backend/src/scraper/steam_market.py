@@ -62,6 +62,11 @@ class SteamMarketClient:
                     STEAM_PRICEOVERVIEW_URL, params=params
                 )
 
+                if resp.status_code == 429:
+                    log.warning("⏳ Rate limited, backing off")
+                    await sleep(60)
+                    return None
+
                 if resp.status_code != 200:
                     self.failures += 1
                     log.warning(
