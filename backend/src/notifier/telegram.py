@@ -14,8 +14,8 @@ class TelegramNotifier:
         self.bot = Bot(token=token)
         self.chat_id = chat_id
 
-    async def notify_opportunity(self, flip: FlipOpportunity) -> None:
-        url = steam_market_url(APP_ID, flip.name)
+    async def notify_opportunity(self, app_id: int, flip: FlipOpportunity) -> None:
+        url = steam_market_url(app_id, flip.name)
 
         keyboard = InlineKeyboardMarkup(
             [
