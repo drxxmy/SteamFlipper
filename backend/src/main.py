@@ -30,7 +30,7 @@ async def scan_once(
 ) -> None:
     for item in watchlist:
         # Fetch data for a specific item
-        data = await client.fetch(item.appid, item.market_hash_name)
+        data = await client.fetch(item.app_id, item.item_name)
 
         await asyncio.sleep(1.5)  # 1–2 seconds is safe
 
@@ -38,7 +38,7 @@ async def scan_once(
         if not data:
             continue
 
-        flip = build_opportunity(item.market_hash_name, data)
+        flip = build_opportunity(item.item_name, data)
 
         # Skip if couldn't build a flip opportunity
         if not flip:
@@ -57,7 +57,7 @@ async def scan_once(
             # Send notification in Telegram
             if result.should_notify and notifier:
                 if not await already_notified(db, flip.name):
-                    await notifier.notify_opportunity(item.appid, flip)
+                    await notifier.notify_opportunity(item.app_id, flip)
                     await mark_notified(db, flip.name)
                 else:
                     log.debug("⏱ %s skipped (cooldown)", flip.name)

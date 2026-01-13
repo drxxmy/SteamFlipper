@@ -38,17 +38,15 @@ class SteamMarketClient:
             timeout=Timeout(10.0),
         )
 
-    async def fetch(
-        self, appid: int, market_hash_name: str
-    ) -> SteamPriceOverview | None:
+    async def fetch(self, app_id: int, item_name: str) -> SteamPriceOverview | None:
         """
         Returns raw Steam priceoverview JSON or None.
         Never raises.
         """
         params = {
-            "appid": appid,
+            "appid": app_id,
             "currency": self.currency,
-            "market_hash_name": market_hash_name,
+            "market_hash_name": item_name,
         }
 
         delay: float = min(5.0, 1.2 + self.failures * 0.8)
@@ -71,7 +69,7 @@ class SteamMarketClient:
                     self.failures += 1
                     log.warning(
                         "❗ %s Steam HTTP %d",
-                        market_hash_name,
+                        item_name,
                         resp.status_code,
                     )
                     return None
@@ -80,12 +78,12 @@ class SteamMarketClient:
                     data: SteamPriceOverview = cast(SteamPriceOverview, resp.json())
                 except JSONDecodeError:
                     self.failures += 1
-                    log.warning("❗ %s Invalid JSON", market_hash_name)
+                    log.warning("❗ %s Invalid JSON", item_name)
                     return None
 
                 if not data.get("success"):
                     self.failures += 1
-                    log.warning("❗ %s Steam rate-limited", market_hash_name)
+                    log.warning("❗ %s Steam rate-limited", item_name)
                     return None
 
                 # Reset failures counter on success
@@ -96,7 +94,7 @@ class SteamMarketClient:
                 self.failures += 1
                 log.warning(
                     "❗ %s Network error %s %s: %r",
-                    market_hash_name,
+                    item_name,
                     e.request.method if e.request else "?",
                     e.request.url if e.request else "?",
                     e,

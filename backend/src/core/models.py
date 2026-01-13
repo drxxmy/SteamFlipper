@@ -19,8 +19,8 @@ MAX_NAME_LEN = 28
 
 @dataclass(slots=True)
 class WatchlistItem:
-    appid: int
-    market_hash_name: str
+    app_id: int
+    item_name: str
 
 
 @dataclass

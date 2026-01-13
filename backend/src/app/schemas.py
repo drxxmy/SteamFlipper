@@ -20,8 +20,8 @@ class OpportunityOut(BaseModel):
 
 
 class WatchlistIn(BaseModel):
-    appid: int
-    market_hash_name: str
+    app_id: int
+    item_name: str
 
 
 class WatchlistOut(WatchlistIn):

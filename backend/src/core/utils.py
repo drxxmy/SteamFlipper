@@ -2,7 +2,7 @@ import re
 from urllib.parse import quote, unquote
 
 _PRICE_RE = re.compile(r"[0-9]+(?:[.,][0-9]+)?")
-_STEAM_MARKET_RE = re.compile(r"/market/listings/(?P<appid>\d+)/(?P<hash>.+)$")
+_STEAM_MARKET_RE = re.compile(r"/market/listings/(?P<app_id>\d+)/(?P<item_name>.+)$")
 
 
 def parse_price(price_str: str) -> float:
@@ -20,13 +20,13 @@ def parse_price(price_str: str) -> float:
     return float(match.group()) if match else 0.0
 
 
-def steam_market_url(appid: int, market_hash_name: str) -> str:
+def steam_market_url(app_id: int, item_name: str) -> str:
     """
     Returns a Steam market URL for the specified appid and item name.
     """
     return (
         f"https://steamcommunity.com/market/listings/"
-        f"{appid}/{quote(market_hash_name, safe='')}"
+        f"{app_id}/{quote(item_name, safe='')}"
     )
 
 
@@ -35,7 +35,7 @@ def parse_steam_market_url(url: str) -> tuple[int, str]:
     if not match:
         raise ValueError("Invalid Steam Market URL")
 
-    appid = int(match.group("appid"))
-    market_hash_name = unquote(match.group("hash"))
+    app_id = int(match.group("app_id"))
+    item_name = unquote(match.group("item_name"))
 
-    return appid, market_hash_name
+    return app_id, item_name

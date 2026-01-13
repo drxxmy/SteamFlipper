@@ -40,12 +40,12 @@ async def init_db() -> None:
             CREATE TABLE IF NOT EXISTS watchlist (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-              appid INTEGER NOT NULL,
-              market_hash_name TEXT NOT NULL,
+              app_id INTEGER NOT NULL,
+              item_name TEXT NOT NULL,
 
               created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-              UNIQUE (appid, market_hash_name)
+              UNIQUE (app_id, item_name)
             );
             """
         )
@@ -141,21 +141,21 @@ async def execute(query: str, params: Iterable = ()) -> None:
 
 
 async def add_watchlist_item(url: str) -> None:
-    appid, market_hash_name = parse_steam_market_url(url)
+    app_id, item_name = parse_steam_market_url(url)
 
     await execute(
         """
-        INSERT OR IGNORE INTO watchlist (appid, market_hash_name)
+        INSERT OR IGNORE INTO watchlist (app_id, item_name)
         VALUES (?, ?)
         """,
-        (appid, market_hash_name),
+        (app_id, item_name),
     )
 
 
 async def fetch_watchlist() -> list[WatchlistItem]:
     rows = await fetch_all(
         """
-        SELECT appid, market_hash_name
+        SELECT app_id, item_name
         FROM watchlist
         ORDER BY created_at ASC
         """
@@ -163,8 +163,8 @@ async def fetch_watchlist() -> list[WatchlistItem]:
 
     return [
         WatchlistItem(
-            appid=row["appid"],
-            market_hash_name=row["market_hash_name"],
+            app_id=row["app_id"],
+            item_name=row["item_name"],
         )
         for row in rows
     ]
