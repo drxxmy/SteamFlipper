@@ -40,11 +40,11 @@ const sortedItems = computed(() => {
 
 /* ---------------- data ---------------- */
 
-const {
-  state: items,
-  isLoading: loading,
-  execute: refresh,
-} = useAsyncState<Opportunity[]>(fetchOpportunities, [], { immediate: true });
+const { state: items, isLoading: loading } = useAsyncState<Opportunity[]>(
+  fetchOpportunities,
+  [],
+  { immediate: true },
+);
 
 /* ---------------- helpers ---------------- */
 
