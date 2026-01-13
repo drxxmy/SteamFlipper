@@ -6,7 +6,7 @@ from telegram.constants import ParseMode
 from core.models import FlipOpportunity
 from core.utils import steam_market_url
 
-log = logging.getLogger("automarket.telegram")
+log = logging.getLogger("steamflipper.telegram")
 
 
 class TelegramNotifier:

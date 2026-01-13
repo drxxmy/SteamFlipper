@@ -23,7 +23,7 @@ HEADERS = {
 # Global semaphore to protect yourself
 _SEMAPHORE = Semaphore(3)
 
-log = logging.getLogger("automarket.scraper")
+log = logging.getLogger("steamflipper.scraper")
 
 
 class SteamMarketClient:

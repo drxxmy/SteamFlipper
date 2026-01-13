@@ -16,7 +16,7 @@ from notifier.telegram import TelegramNotifier
 from scraper.steam_market import SteamMarketClient, build_opportunity
 
 setup_logging()
-log = logging.getLogger("automarket.market")
+log = logging.getLogger("steamflipper.market")
 
 
 async def scan_item(
