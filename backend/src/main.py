@@ -10,13 +10,7 @@ from core.env import (
     TELEGRAM_CHAT_ID,
 )
 from core.models import ScanResult, WatchlistItem
-from db.database import (
-    already_notified,
-    fetch_watchlist,
-    init_db,
-    mark_notified,
-    save_opportunity,
-)
+from db.database import Database
 from logs.logging import setup_logging
 from notifier.telegram import TelegramNotifier
 from scraper.steam_market import SteamMarketClient, build_opportunity
@@ -27,9 +21,9 @@ log = logging.getLogger("automarket.market")
 
 async def scan_item(
     *,
-    db: aiosqlite.Connection,
+    db: Database,
     client: SteamMarketClient,
-    notifier,
+    notifier: TelegramNotifier | None = None,
     item: WatchlistItem
 ) -> ScanResult | None:
     # Fetch data for a specific item
@@ -47,22 +41,28 @@ async def scan_item(
 
     # Evaluate flip
     result = flip.evaluate()
-    await save_opportunity(db, flip, result)
+    await db.save_opportunity(flip, result)
 
     # Send notification in Telegram
     if result.should_notify and notifier:
-        if not await already_notified(db, flip.name):
+        if not await db.already_notified(flip.name):
             await notifier.notify_opportunity(item.app_id, flip)
-            await mark_notified(db, flip.name)
+            await db.mark_notified(flip.name)
 
     return ScanResult(flip, result)
 
 
 async def scan_once(
-    client: SteamMarketClient, notifier, watchlist: list[WatchlistItem]
+    client: SteamMarketClient, notifier: TelegramNotifier | None = None
 ) -> None:
-    async with aiosqlite.connect(DB_PATH) as db:
+    async with aiosqlite.connect(DB_PATH) as conn:
+        db = Database(conn)
+        watchlist = await db.fetch_watchlist()
         for item in watchlist:
+            if not watchlist:
+                log.warning("⚠️ Watchlist is empty")
+                continue
+
             result = await scan_item(db=db, client=client, notifier=notifier, item=item)
 
             if not result:
@@ -72,14 +72,14 @@ async def scan_once(
             fmt, args = result.flip.log_message(result.evaluation)
             log.log(result.evaluation.log_level, fmt, *args)
 
-            if await already_notified(db, result.flip.name):
+            if await db.already_notified(result.flip.name):
                 log.debug("⏱ %s skipped (cooldown)", result.flip.name)
 
-            await db.commit()
+            await conn.commit()
 
 
 async def run() -> None:
-    await init_db()
+    await Database.init()
     client = SteamMarketClient(currency=5)
     notifier = None
     if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
@@ -91,12 +91,8 @@ async def run() -> None:
     try:
         while True:
             log.info("🔄 Starting market scan")
-            watchlist = await fetch_watchlist()
 
-            if not watchlist:
-                log.warning("⚠️ Watchlist is empty")
-            else:
-                await scan_once(client, notifier, watchlist)
+            await scan_once(client, notifier)
 
             log.info("😴 Sleeping for %d seconds", CHECK_INTERVAL_SECONDS)
             await asyncio.sleep(CHECK_INTERVAL_SECONDS)
