@@ -4,9 +4,9 @@ windows:
   - editor:
       panes:
         - nvim
-  - fish:
-      panes:
-        - ls -la
   - git:
       panes:
         - lazygit
+  - servers:
+      panes:
+        - devenv up
