@@ -22,7 +22,7 @@ class TelegramNotifier:
             [
                 [
                     InlineKeyboardButton(
-                        text="🛒 Open Market",
+                        text="🛒 Buy on Steam",
                         url=url,
                     ),
                     InlineKeyboardButton(
