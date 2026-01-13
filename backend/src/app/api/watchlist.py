@@ -38,7 +38,5 @@ async def add_watchlist_and_scan(
         # Log flip
         fmt, args = result.flip.log_message(result.evaluation)
         log.log(result.evaluation.log_level, fmt, *args)
-
         await db.commit()
-
-    return {"status": "ok"}
+        return {"opportunity": result.to_dict() if result else None}

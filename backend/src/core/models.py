@@ -207,3 +207,14 @@ class FlipOpportunity:
 class ScanResult:
     flip: FlipOpportunity
     evaluation: FlipEvaluation
+
+    def to_dict(self):
+        return {
+            "item_name": self.flip.name,
+            "buy_price": self.flip.buy_price,
+            "sell_price": self.flip.sell_price,
+            "net_profit": self.flip.net_profit,
+            "profit_pct": self.flip.profit_pct,
+            "volume": self.flip.volume,
+            "risk_level": self.flip.risk_level.value,
+        }

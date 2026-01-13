@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { addWatchlistItem } from "@/api/watchlist";
+import type { Opportunity } from "@/api/opportunities";
 
 const emit = defineEmits<{
-  (e: "added"): void;
+  (e: "added", item: Opportunity | null): void;
 }>();
 
 const url = ref("");
@@ -14,8 +15,8 @@ async function submit() {
 
   loading.value = true;
   try {
-    await addWatchlistItem(url.value);
-    emit("added"); // notify parent
+    const res = await addWatchlistItem(url.value);
+    emit("added", res.opportunity); // notify parent
     url.value = "";
   } finally {
     loading.value = false;

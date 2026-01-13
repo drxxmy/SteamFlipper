@@ -46,8 +46,6 @@ const {
   execute: refresh,
 } = useAsyncState<Opportunity[]>(fetchOpportunities, [], { immediate: true });
 
-useIntervalFn(refresh, 15_000); // Auto-refresh every 15 seconds
-
 /* ---------------- helpers ---------------- */
 
 function openSteam(item_name: string) {
@@ -78,6 +76,15 @@ function riskBadge(risk: string) {
     default:
       return "bg-muted text-gray-900";
   }
+}
+
+function onAdded(opportunity: Opportunity | null) {
+  if (!opportunity) return;
+
+  // avoid duplicates
+  if (items.value.some((i) => i.item_name === opportunity.item_name)) return;
+
+  items.value = [opportunity, ...items.value];
 }
 </script>
 
@@ -197,6 +204,6 @@ function riskBadge(risk: string) {
         </tbody>
       </table>
     </div>
-    <AddWatchlist @added="refresh" />
+    <AddWatchlist @added="onAdded" />
   </div>
 </template>
