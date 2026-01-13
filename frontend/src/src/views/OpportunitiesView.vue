@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAsyncState, useIntervalFn } from "@vueuse/core";
+import { useAsyncState } from "@vueuse/core";
 import SortableTh from "@/components/SortableTh.vue";
 import AddWatchlist from "@/components/AddWatchlist.vue";
 import { fetchOpportunities, type Opportunity } from "@/api/opportunities";
