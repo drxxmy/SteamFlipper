@@ -11,14 +11,30 @@ async def list_opportunities(
     profitable: bool | None = None,
     limit: int = Query(100, le=500),
 ):
-    query = "SELECT * FROM opportunities WHERE 1=1"
+    query = """
+    SELECT *
+    FROM (
+        SELECT
+            o.*,
+            ROW_NUMBER() OVER (
+                PARTITION BY o.item_name
+                ORDER BY o.net_profit DESC, o.detected_at DESC
+            ) AS rn
+        FROM opportunities o
+        WHERE 1=1
+    )
+    WHERE rn = 1
+    """
     params: list = []
 
     if profitable is not None:
         query += " AND profitable = ?"
         params.append(int(profitable))
 
-    query += " ORDER BY detected_at DESC LIMIT ?"
+    query += """
+    ORDER BY net_profit DESC
+    LIMIT ?
+    """
     params.append(limit)
 
     return await fetch_all(query, tuple(params))
