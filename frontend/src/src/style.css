@@ -4,4 +4,35 @@
 
 @theme {
   --font-sans: "Nunito", system-ui, sans-serif;
+  /* ---------------- Backgrounds ---------------- */
+  --color-bg: #171a21;
+  --color-panel: #1b2838;
+  --color-panel-light: #2a475e;
+
+  /* ---------------- Borders ---------------- */
+  --color-border: #2f4f6f;
+
+  /* ---------------- Text ---------------- */
+  --color-text: #c7d5e0;
+  --color-muted: #8f98a0;
+
+  /* ---------------- Accents ---------------- */
+  --color-accent: #66c0f4;
+
+  /* ---------------- Semantic ---------------- */
+  --color-green: #5ba32b;
+  --color-red: #c23c2a;
+  --color-yellow: #d2a700;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+  }
+
+  body {
+    min-height: 100vh;
+  }
 }

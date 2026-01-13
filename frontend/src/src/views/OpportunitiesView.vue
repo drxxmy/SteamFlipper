@@ -69,13 +69,13 @@ function sortBy(key: SortKey) {
 function riskBadge(risk: string) {
   switch (risk) {
     case "LOW":
-      return "bg-green-100 text-green-700";
+      return "bg-green text-green-900";
     case "MEDIUM":
-      return "bg-yellow-100 text-yellow-700";
+      return "bg-yellow text-yellow-900";
     case "HIGH":
-      return "bg-red-100 text-red-700";
+      return "bg-red text-red-900";
     default:
-      return "bg-gray-100 text-gray-700";
+      return "bg-muted text-gray-900";
   }
 }
 </script>
@@ -84,11 +84,11 @@ function riskBadge(risk: string) {
   <div class="p-6 mx-auto max-w-7xl">
     <h1 class="mb-4 text-2xl font-semibold">Steam Flip Opportunities</h1>
 
-    <div v-if="loading" class="text-gray-500">Loading…</div>
+    <div v-if="loading" class="text-muted">Loading…</div>
 
-    <div v-else class="overflow-x-auto rounded-lg border border-gray-200">
+    <div v-else class="overflow-x-auto rounded-lg border border-border">
       <table class="min-w-full text-sm">
-        <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-100">
+        <thead class="sticky top-0 text-xs uppercase text-muted bg-panel">
           <tr>
             <SortableTh
               label="Item"
@@ -147,11 +147,11 @@ function riskBadge(risk: string) {
           </tr>
         </thead>
 
-        <tbody class="divide-y divide-gray-200">
+        <tbody class="divide-y divide-border">
           <tr
             v-for="item in sortedItems"
             :key="item.id"
-            class="hover:bg-gray-200 hover:cursor-pointer"
+            class="hover:cursor-pointer hover:bg-panel-light"
             @click="openSteam(item.item_name)"
           >
             <td class="py-2 px-4 font-medium whitespace-nowrap">
@@ -168,19 +168,19 @@ function riskBadge(risk: string) {
 
             <td
               class="py-2 px-4 font-mono text-right"
-              :class="item.net_profit >= 0 ? 'text-green-600' : 'text-red-600'"
+              :class="item.net_profit >= 0 ? 'text-green' : 'text-red'"
             >
               {{ item.net_profit.toFixed(2) }}
             </td>
 
             <td
               class="py-2 px-4 font-mono text-right"
-              :class="item.profit_pct >= 0 ? 'text-green-600' : 'text-red-600'"
+              :class="item.profit_pct >= 0 ? 'text-green' : 'text-red'"
             >
               {{ (item.profit_pct * 100).toFixed(2) }}%
             </td>
 
-            <td class="py-2 px-4 font-mono text-right text-gray-700">
+            <td class="py-2 px-4 font-mono text-right text-muted">
               {{ item.volume }}
             </td>
 
