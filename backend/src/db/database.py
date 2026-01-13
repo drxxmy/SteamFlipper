@@ -54,7 +54,7 @@ async def init_db() -> None:
 
 async def already_notified(db: aiosqlite.Connection, item_name: str) -> bool:
     query = """
-        SELECT last_notified_at
+        SELECT notified_at
         FROM notifications
         WHERE item_name = ?
     """
@@ -64,10 +64,10 @@ async def already_notified(db: aiosqlite.Connection, item_name: str) -> bool:
     if not row:
         return False
 
-    last_notified_at = datetime.fromisoformat(row[0])
+    notified_at = datetime.fromisoformat(row[0])
     cooldown = timedelta(minutes=NOTIFY_COOLDOWN_MINUTES)
 
-    return datetime.now(UTC) - last_notified_at < cooldown
+    return datetime.now(UTC) - notified_at < cooldown
 
 
 async def mark_notified(db: aiosqlite.Connection, item_name: str) -> None:
