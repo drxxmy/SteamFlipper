@@ -51,7 +51,7 @@ It monitors selected Steam Market items, evaluates potential flip profitability
 ### 1. Clone the repository
 
 ```bash
-git clone https://codeberg.org/dreamy/steam-flipper.git
+git clone https://github.com/drxxmy/SteamFlipper.git
 cd steam-flipper
 ```
 
